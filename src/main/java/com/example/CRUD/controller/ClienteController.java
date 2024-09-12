@@ -103,12 +103,14 @@ public class ClienteController {
     @PutMapping("/enderecos/{fkCliente}")
     public ResponseEntity<EnderecoEntity> atualizarEndereco(
             @PathVariable int fkCliente,
-            @RequestBody EnderecoEntity enderecoAtualziado
-
+            @RequestBody EnderecoEntity enderecoAtualziado,
+            @RequestParam String cep
     ) {
         enderecoAtualziado.setFkCliente(fkCliente);
-        Optional<EnderecoEntity> enderecos = enderecoRepository.findByFkClienteAndCep(fkCliente, enderecoAtualziado.getCep());
+        enderecoAtualziado.setCep(cep);
+        Optional<EnderecoEntity> enderecos = enderecoRepository.findByFkClienteAndCep(fkCliente, cep);
         enderecoAtualziado.setId_endereco(enderecos.get().getId_endereco());
+
         if (enderecos.isPresent()){
 
             return ResponseEntity.status(200).body(enderecoRepository.save(enderecoAtualziado));

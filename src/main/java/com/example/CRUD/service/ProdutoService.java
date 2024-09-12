@@ -23,11 +23,12 @@ public class ProdutoService {
         produto.setNome(produtoDTO.getNome());
         produto.setDescricao(produtoDTO.getDescricao());
         produto.setCategoria(produtoDTO.getCategoria());
-        produto.setQtdEstoque(produtoDTO.getQtdEstoque());
+        produto.setQtdPedido(produtoDTO.getQtdPedido());
         produto.setPrecoUnitario(produtoDTO.getPrecoUnitario());
         produto.setFornecedor(produtoDTO.getFornecedor());
         produto.setLocalizacao(produtoDTO.getFornecedor());
         produto.setDataAtualizcao(produtoDTO.getDataAtualizcao());
+        produto.setFkCliente(produtoDTO.getFkCliente());
 
         return produtoRepository.save(produto);
     }

@@ -15,9 +15,11 @@ public class MaoDeObraDTO {
     private String nome;
     private String descricao;
     private String categoria;
-    private Integer qtdEstoque;
-    private Double precoUnitario;
-    private String fornecedor;
-    private String localizacao;
-    private LocalDate dataAtualizcao;
+    private Double CustoProduto;
+    private Double precoMaoDeObra;
+    private String responsavel;
+    private LocalDate horaEstimada;
+    private LocalDate dataInicio;
+    private Integer fkCliente;
+
 }

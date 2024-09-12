@@ -1,5 +1,6 @@
 package com.example.CRUD.entity;
 
+import com.example.CRUD.Pedido;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,7 +11,7 @@ import java.time.LocalDate;
 @Table(name = "produtos")
 @Getter
 @Setter
-public class ProdutoEntity {
+public class ProdutoEntity implements Pedido {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,9 +19,15 @@ public class ProdutoEntity {
     private String nome;
     private String descricao;
     private String categoria;
-    private Integer qtdEstoque;
+    private Integer qtdPedido;
     private Double precoUnitario;
     private String fornecedor;
     private String localizacao;
     private LocalDate dataAtualizcao;
+    private String fkCliente;
+
+    @Override
+    public Double calcularPreco() {
+        return precoUnitario * qtdPedido;
+    }
 }

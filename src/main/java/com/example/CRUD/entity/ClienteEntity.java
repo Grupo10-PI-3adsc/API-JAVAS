@@ -36,6 +36,7 @@ public class ClienteEntity {
     @Column(name = "Data_Cadastro")
     private String dataCadastro;
 
+
 }
 
 

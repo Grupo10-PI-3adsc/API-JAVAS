@@ -15,9 +15,10 @@ public class ProdutoDTO {
     private String nome;
     private String descricao;
     private String categoria;
-    private Integer qtdEstoque;
+    private Integer qtdPedido;
     private Double precoUnitario;
     private String fornecedor;
     private String localizacao;
     private LocalDate dataAtualizcao;
+    private String fkCliente;
 }

@@ -26,11 +26,17 @@ public class MaoDeObraService {
         produto.setNome(maoDeObraDTO.getNome());
         produto.setDescricao(maoDeObraDTO.getDescricao());
         produto.setCategoria(maoDeObraDTO.getCategoria());
-        produto.setQtdEstoque(maoDeObraDTO.getQtdEstoque());
-        produto.setPrecoUnitario(maoDeObraDTO.getPrecoUnitario());
-        produto.setFornecedor(maoDeObraDTO.getFornecedor());
-        produto.setLocalizacao(maoDeObraDTO.getFornecedor());
-        produto.setDataAtualizcao(maoDeObraDTO.getDataAtualizcao());
+        produto.setCustoProduto(maoDeObraDTO.getCustoProduto());
+        produto.setPrecoMaoDeObra(maoDeObraDTO.getPrecoMaoDeObra());
+        produto.setResponsavel(maoDeObraDTO.getResponsavel());
+        produto.setHoraEstimada(maoDeObraDTO.getHoraEstimada());
+        produto.setDataInicio(maoDeObraDTO.getDataInicio());
+        produto.setFkCliente(maoDeObraDTO.getFkCliente());
+//        produto.setQtdEstoque(maoDeObraDTO.getQtdEstoque());
+//        produto.setPrecoUnitario(maoDeObraDTO.getPrecoUnitario());
+//        produto.setFornecedor(maoDeObraDTO.getFornecedor());
+//        produto.setLocalizacao(maoDeObraDTO.getFornecedor());
+//        produto.setDataAtualizcao(maoDeObraDTO.getDataAtualizcao());
 
         return produtoRepository.save(produto);
     }
