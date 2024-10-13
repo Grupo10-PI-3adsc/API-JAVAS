@@ -1,4 +1,4 @@
-package com.example.CRUD.dto;
+package com.example.CRUD.dto.produto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

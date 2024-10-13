@@ -1,11 +1,7 @@
 package com.example.CRUD.service;
 
-import com.example.CRUD.dto.MaoDeObraDTO;
-import com.example.CRUD.dto.ProdutoDTO;
 import com.example.CRUD.entity.MaoDeObrEntity;
-import com.example.CRUD.entity.ProdutoEntity;
 import com.example.CRUD.repository.MaoDeObraRepository;
-import com.example.CRUD.repository.ProdutoRepository;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +9,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import javax.lang.model.element.NestingKind;
 import java.util.List;
 import java.util.Optional;
 

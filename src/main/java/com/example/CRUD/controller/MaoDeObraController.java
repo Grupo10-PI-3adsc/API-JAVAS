@@ -1,8 +1,6 @@
 package com.example.CRUD.controller;
 
-import com.example.CRUD.dto.MaoDeObraDTO;
 import com.example.CRUD.entity.MaoDeObrEntity;
-import com.example.CRUD.entity.ProdutoEntity;
 import com.example.CRUD.repository.MaoDeObraRepository;
 import com.example.CRUD.service.MaoDeObraService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/mao-de-obra")

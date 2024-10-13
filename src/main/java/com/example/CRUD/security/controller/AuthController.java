@@ -1,19 +1,18 @@
 package com.example.CRUD.security.controller;
 
-import com.example.CRUD.security.dto.LoginRequestDTO;
-import com.example.CRUD.security.dto.RegisterRequestDTO;
-import com.example.CRUD.security.dto.ResponseDTO;
-import com.example.CRUD.entity.ClienteEntity;
-import com.example.CRUD.repository.ClienteRepository;
+import com.example.CRUD.dto.user.UserDTO;
+import com.example.CRUD.dto.user.UserMapper;
+import com.example.CRUD.repository.UserRepository;
+import com.example.CRUD.dto.user.LoginRequestDTO;
+import com.example.CRUD.dto.user.RegisterRequestDTO;
+import com.example.CRUD.entity.UserEntity;
 import com.example.CRUD.security.securityToken.TokenService;
+import com.example.CRUD.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
@@ -22,34 +21,35 @@ import java.util.Optional;
 @RequestMapping("/auth")
 @RequiredArgsConstructor
 public class AuthController {
-    private final ClienteRepository clienteRepository;
+    private final UserRepository userRepository;
+    private final UserService userService;
     private final PasswordEncoder passwordEncoder;
     private final TokenService tokenService;
 
     @PostMapping("/login")
-    public ResponseEntity login(@RequestBody LoginRequestDTO body) {
-        ClienteEntity cliente = this.clienteRepository.findByEmail(body.email()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário invalido"));
-        if(passwordEncoder.matches(body.password(),cliente.getSenha())) {
-            String token = this.tokenService.generateToken(cliente);
-            return ResponseEntity.ok(new ResponseDTO(cliente.getNome(), token));
-        }
-        return ResponseEntity.badRequest().build();
+    public ResponseEntity<LoginRequestDTO> login(@RequestBody LoginRequestDTO body) {
+        LoginRequestDTO user = userService.login(body);
+        return ResponseEntity.ok(user);
     }
 
     @PostMapping("/register")
-    public ResponseEntity register(@RequestBody RegisterRequestDTO body) {
-        Optional<ClienteEntity> cliente = this.clienteRepository.findByEmail(body.email());
+    public ResponseEntity register
+            (
+            @RequestBody RegisterRequestDTO body
+    )
+    {
 
-        if (cliente.isEmpty()) {
-            ClienteEntity newCliente = new ClienteEntity();
-            newCliente.setSenha(passwordEncoder.encode(body.password()));
-            newCliente.setEmail(body.email());
-            newCliente.setNome(body.name());
-            this.clienteRepository.save(newCliente);
+        UserEntity usuarioParaSalvar = UserMapper.toEntity(body);
 
-            String token = this.tokenService.generateToken(newCliente);
-            return ResponseEntity.ok(new ResponseDTO(newCliente.getNome(), token));
-        }
-        return ResponseEntity.badRequest().build();
+        usuarioParaSalvar.setSenha(passwordEncoder.encode(usuarioParaSalvar.getSenha()));
+
+        UserEntity usuarioSalvo = this.userService.save(usuarioParaSalvar, body.getEnderecoId());
+
+        String token = this.tokenService.generateToken(usuarioSalvo);
+
+        UserDTO userDTO = UserMapper.toDTO(usuarioSalvo, token);
+
+        return ResponseEntity.created(null).body(userDTO);
+
     }
 }

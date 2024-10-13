@@ -1,6 +1,5 @@
-package com.example.CRUD.dto;
+package com.example.CRUD.dto.endereco;
 
-import jakarta.persistence.ForeignKey;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,7 +9,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class EnderecoDTO {
 
-    private Integer id;
     private String cep;
     private String logradouro;
     private String complemento;
@@ -21,5 +19,6 @@ public class EnderecoDTO {
     private String gia;
     private String ddd;
     private String siafi;
-    private Integer fkCliente;
+    private Boolean isActive;
+
 }

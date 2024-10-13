@@ -1,34 +1,42 @@
 package com.example.CRUD.controller;
 
-import com.example.CRUD.dto.EnderecoDTO;
+import com.example.CRUD.dto.endereco.EnderecoDTO;
+import com.example.CRUD.dto.endereco.EnderecoMapper;
 import com.example.CRUD.entity.EnderecoEntity;
 import com.example.CRUD.repository.EnderecoRepository;
 import com.example.CRUD.service.EnderecoService;
 import com.gtbr.ViaCepClient;
 import com.gtbr.domain.Cep;
-import org.apache.coyote.Response;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
-import java.util.Optional;
 
 @Controller
 @RequestMapping("/enderecos")
+@RequiredArgsConstructor
 public class EnderecoController {
 
-    @Autowired
-    private EnderecoRepository enderecoRepository;
+    private final EnderecoRepository enderecoRepository;
+
     @Autowired
     private EnderecoService enderecoService;
 
-    @PostMapping()
-    public ResponseEntity<EnderecoEntity> cadastrarEndereco(@RequestBody EnderecoEntity enderecoEntity) {
-        return ResponseEntity.ok().body(enderecoService.save(enderecoEntity));
+    @PostMapping("/{id}")
+    public ResponseEntity<EnderecoEntity> cadastrarEndereco(
+            @RequestParam String cep,
+            @PathVariable int id
+            ) {
+
+        Cep viaCep = ViaCepClient.findCep(cep);
+
+        return ResponseEntity.created(null).body(
+                enderecoService.save(EnderecoMapper.toEntity(viaCep), id)
+        );
     }
 
     @GetMapping()
@@ -40,19 +48,19 @@ public class EnderecoController {
         return ResponseEntity.status(200).body(listAddress);
     }
 
-    @GetMapping("{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<EnderecoEntity> buscarPorId(@PathVariable int id) {
         return ResponseEntity.ok(enderecoService.buscarPorId(id));
     }
     
 
-    @GetMapping("{fkCliente}")
-    public ResponseEntity<Void> deletaEndereco(@PathVariable Integer fkCliente) {
-        enderecoService.listEnderecoPorCliente(fkCliente);
-        return ResponseEntity.status(200).build();
-    }
+//    @GetMapping("{fkCliente}")
+//    public ResponseEntity<Void> deletaEndereco(@PathVariable Integer fkCliente) {
+//        enderecoService.listEnderecoPorCliente(fkCliente);
+//        return ResponseEntity.status(200).build();
+//    }
 
-    @DeleteMapping("{id}")
+    @PutMapping("/inativar-endereco/{id}")
     public ResponseEntity<EnderecoEntity> desativarEnderecoPorId(@PathVariable int id) {
         return ResponseEntity.ok(enderecoService.buscarPorId(id));
     }

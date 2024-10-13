@@ -1,58 +1,52 @@
 package com.example.CRUD.controller;
-import com.example.CRUD.entity.ClienteEntity;
-import com.example.CRUD.repository.ClienteRepository;
-import com.example.CRUD.service.ClienteService;
+import com.example.CRUD.entity.UserEntity;
+import com.example.CRUD.repository.UserRepository;
+import com.example.CRUD.service.UserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
-@RequestMapping("/clientes")
-public class ClienteController {
+@RequestMapping("/usuarios")
+public class UserController {
 
     @Autowired
-    private ClienteRepository clienteRepository;
+    private UserRepository userRepository;
     @Autowired
-    private ClienteService clienteService;
+    private UserService userService;
 
     @GetMapping
-    public ResponseEntity<List<ClienteEntity>> listar() {
-        List<ClienteEntity> cliente = clienteService.listarCliente();
+    public ResponseEntity<List<UserEntity>> listar() {
+        List<UserEntity> user = userService.listarCliente();
 
-        if(cliente.isEmpty()) {
+        if(user.isEmpty()) {
             return ResponseEntity.status(204).build();
         }
-        return ResponseEntity.status(201).body(cliente);
+        return ResponseEntity.status(201).body(user);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ClienteEntity> buscarPorIndice (@PathVariable int id) {
-       return ResponseEntity.ok(clienteService.clientePorId(id));
-    }
-
-    @PostMapping
-    public ResponseEntity<ClienteEntity> criar(@RequestBody ClienteEntity clienteNovo){
-        return ResponseEntity.ok(clienteService.save(clienteNovo));
+    public ResponseEntity<UserEntity> buscarPorIndice (@PathVariable int id) {
+       return ResponseEntity.ok(userService.userPorId(id));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ClienteEntity> atualizar(@PathVariable Integer id, @RequestBody ClienteEntity clienteEntity){
-        if(clienteRepository.existsById(id)) {
-            clienteEntity.setIdCliente(id);
-            return ResponseEntity.status(200).body(clienteRepository.save(clienteEntity));
+    public ResponseEntity<UserEntity> atualizar(@PathVariable Integer id, @RequestBody UserEntity userEntity){
+        if(userRepository.existsById(id)) {
+            userEntity.setId(id);
+            return ResponseEntity.status(200).body(userRepository.save(userEntity));
         }
 
         return ResponseEntity.status(404).build();
     }
 
-    @DeleteMapping("/{id}")
+    @PutMapping("/inativar-cliente/{id}")
     public ResponseEntity<Void> deletarCliente(@PathVariable Integer id) {
-        if(clienteRepository.existsById(id)) {
-            clienteService.inativarCliente(id);
+        if(userRepository.existsById(id)) {
+            userService.inativarCliente(id);
             return ResponseEntity.status(204).build();
         }
         return ResponseEntity.status(404).build();

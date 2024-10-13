@@ -2,21 +2,20 @@ package com.example.CRUD.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
+@Table(name = "endereco")
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "endereco")
+@AllArgsConstructor
+@Builder
 public class EnderecoEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_endereco")
     private Integer id;
     private String cep;
     private String logradouro;
@@ -28,12 +27,6 @@ public class EnderecoEntity {
     private String gia;
     private String ddd;
     private String siafi;
-    private Boolean isActive;
-//    @Column(insertable=false, updatable=false)
-    private Integer fkCliente;
-    @ManyToOne
-    @JsonIgnore
-    @JoinColumn(name = "cliente", referencedColumnName = "idCliente")
-    private ClienteEntity cliente; // Associação com ClienteEntity
+    private Boolean isActive = true;
 
 }

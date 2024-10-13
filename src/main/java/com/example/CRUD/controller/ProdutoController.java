@@ -1,6 +1,5 @@
 package com.example.CRUD.controller;
 
-import com.example.CRUD.dto.ProdutoDTO;
 import com.example.CRUD.entity.ProdutoEntity;
 import com.example.CRUD.repository.MaoDeObraRepository;
 import com.example.CRUD.repository.ProdutoRepository;
@@ -30,7 +29,7 @@ public class ProdutoController {
     @Autowired
     private ProdutoService produtoService;
 
-    @GetMapping()
+    @GetMapping("/listar-produtos")
     public ResponseEntity<List<ProdutoEntity>> listar() {
         return ResponseEntity.ok(produtoService.listarProduto());
     }
