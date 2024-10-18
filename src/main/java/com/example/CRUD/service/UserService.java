@@ -13,6 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -58,8 +59,14 @@ public class UserService {
 
 
     public List<UserEntity> userPorNome(String nome) {
+
+
         return userRepository.findByNomeContainingIgnoreCase(nome);
     }
+//
+//    public List<UserEntity> userPorNome(String nome, List<RegisterRequestDTO> users) {
+//
+//    }
 
     public UserEntity atualizarCliente(UserEntity user, int id) {
         if (!userRepository.existsById(id)) {
@@ -97,31 +104,46 @@ public class UserService {
 
     public List<UserEntity> ordernar() {
         List<UserEntity> users = userRepository.findAll();
-        return particiona(users, 0, users.size());
+
+        UserEntity[] userEntities = new UserEntity[users.size()];
+
+        for (int i = 0; i < users.size(); i++) {
+            userEntities[i] = users.get(i);
+        }
+
+        userEntities = particiona(userEntities, 0, users.size());
+
+        List<UserEntity> users2 = new ArrayList<>();
+
+        for (UserEntity userAtual : userEntities) {
+            users2.add(userAtual);
+        }
+
+        return users2;
     }
-    public List<UserEntity> ordernar(List<UserEntity> users) {
-        return particiona(users, 0, users.size());
+    public UserEntity[] ordernar(UserEntity[] users) {
+        return particiona(users, 0, users.length);
     }
 
-    public static List<UserEntity> particiona(List<UserEntity> v, int indInicio, int indFim){
+    public static UserEntity[] particiona(UserEntity[] v, int indInicio, int indFim){
         int i = indInicio;
         int j = indFim;
 
-        if (v.get((indInicio + indFim) /2) != null  && v.get(i) != null){
+        if (v[(indInicio + indFim) /2] != null  && v[i] != null){
 
-            String pivo = v.get((indInicio + indFim) /2).getNome();
+            String pivo = v[(indInicio + indFim) /2].getNome();
 
             while (i <= j ){
-                while (i < indFim && (v.get(i).getNome().compareTo(pivo) < 0)){
+                while (i < indFim && (v[i].getNome().compareTo(pivo) < 0)){
                     i++;
                 }
-                while (j > indInicio && (v.get(i).getNome().compareTo(pivo) > 0)){
+                while (j > indInicio && (v[i].getNome().compareTo(pivo) > 0)){
                     j--;
                 }
                 if (i<=j){
-                    var aux = v.get(i);
-                    v.set(i, v.get(j));
-                    v.set(j, aux);
+                    var aux = v[i];
+                    v[i] = v[j];
+                    v[j] = aux;
                     i++;
                     j--;
                 }
@@ -139,7 +161,5 @@ public class UserService {
 
     }
 
-    public List<UserEntity> userPorNome(String nome, List<RegisterRequestDTO> users) {
 
-    }
 }

@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @RestController
@@ -72,11 +74,22 @@ public class UserController {
     public ResponseEntity<List<UserDTOResponse>> ordernar (
             @RequestBody List<RegisterRequestDTO> users
     ) {
-        List<UserEntity> usuarios = userService.ordernar();
 
-        return usuarios.isEmpty() ?
+        List<UserEntity> userE = users.stream().map(UserMapper :: toEntity).toList();
+
+        UserEntity[] userEntities = new UserEntity[users.size()];
+
+        for (int i = 0; i < users.size(); i++) {
+            userEntities[i] = userE.get(i);
+        }
+
+        userEntities = userService.ordernar(userEntities);
+
+        List<UserEntity> users2 = new ArrayList<>(Arrays.asList(userEntities));
+
+        return users2.isEmpty() ?
             ResponseEntity.noContent().build() :
-            ResponseEntity.ok(usuarios
+            ResponseEntity.ok(users2
                     .stream().map(UserMapper::toDTO).toList());
     }
 
@@ -94,18 +107,6 @@ public class UserController {
 
     }
 
-    @GetMapping("/pesquisar")
-    public ResponseEntity<List<UserDTOResponse>> pesquisar(
-            @RequestParam String nome,
-            @RequestBody List<RegisterRequestDTO> users
-    ){
 
-        List<UserEntity> usuarios = userService.userPorNome(nome, users);
 
-        return usuarios.isEmpty() ?
-                ResponseEntity.noContent().build() :
-                ResponseEntity.ok(usuarios
-                        .stream().map(UserMapper::toDTO).toList());
-
-    }
 }
