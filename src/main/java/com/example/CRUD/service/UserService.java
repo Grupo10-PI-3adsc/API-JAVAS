@@ -1,5 +1,6 @@
 package com.example.CRUD.service;
 import com.example.CRUD.dto.user.LoginRequestDTO;
+import com.example.CRUD.dto.user.RegisterRequestDTO;
 import com.example.CRUD.entity.UserEntity;
 import com.example.CRUD.entity.EnderecoEntity;
 import com.example.CRUD.permissionSets;
@@ -92,5 +93,53 @@ public class UserService {
 
         }
         throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário ou usuario invalido");
+    }
+
+    public List<UserEntity> ordernar() {
+        List<UserEntity> users = userRepository.findAll();
+        return particiona(users, 0, users.size());
+    }
+    public List<UserEntity> ordernar(List<UserEntity> users) {
+        return particiona(users, 0, users.size());
+    }
+
+    public static List<UserEntity> particiona(List<UserEntity> v, int indInicio, int indFim){
+        int i = indInicio;
+        int j = indFim;
+
+        if (v.get((indInicio + indFim) /2) != null  && v.get(i) != null){
+
+            String pivo = v.get((indInicio + indFim) /2).getNome();
+
+            while (i <= j ){
+                while (i < indFim && (v.get(i).getNome().compareTo(pivo) < 0)){
+                    i++;
+                }
+                while (j > indInicio && (v.get(i).getNome().compareTo(pivo) > 0)){
+                    j--;
+                }
+                if (i<=j){
+                    var aux = v.get(i);
+                    v.set(i, v.get(j));
+                    v.set(j, aux);
+                    i++;
+                    j--;
+                }
+            }
+
+            if (indInicio < j){
+                particiona(v, indInicio, j);
+            }
+            if (i<indFim){
+                particiona(v, i, indFim);
+            }
+        }
+
+        return v;
+
+    }
+
+    public List<UserEntity> userPorNome(String nome, List<RegisterRequestDTO> users) {
+
     }
 }
