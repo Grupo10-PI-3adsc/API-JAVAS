@@ -13,4 +13,6 @@ public interface MaoDeObraRepository extends JpaRepository<MaoDeObrEntity, Integ
     List<MaoDeObrEntity> findAllByFkCliente(int id);
 
     Optional<MaoDeObrEntity> findByFkCliente(int id);
+
+    Optional<MaoDeObrEntity> findByCod(Integer cod);
 }

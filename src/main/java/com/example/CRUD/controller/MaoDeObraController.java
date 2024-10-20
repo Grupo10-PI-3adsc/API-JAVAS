@@ -1,5 +1,7 @@
 package com.example.CRUD.controller;
 
+import com.example.CRUD.dto.maoDeObra.MaoDeObraDTO;
+import com.example.CRUD.dto.veiculo.VeiculoDTO;
 import com.example.CRUD.entity.MaoDeObrEntity;
 import com.example.CRUD.repository.MaoDeObraRepository;
 import com.example.CRUD.service.MaoDeObraService;
@@ -40,8 +42,8 @@ public class MaoDeObraController {
     }
 
     @PostMapping()
-    public ResponseEntity<MaoDeObrEntity> criarMaoDeObra(@RequestBody MaoDeObrEntity maoDeObraNovo, @PathVariable int id) {
-        return ResponseEntity.ok(maoDeObraService.adicionarServico(maoDeObraNovo, id));
+    public ResponseEntity<MaoDeObrEntity> criarMaoDeObra(@RequestBody MaoDeObraDTO maoDeObraNovo, @RequestBody VeiculoDTO veiculoDTO) {
+        return ResponseEntity.ok(maoDeObraService.adicionarServico(maoDeObraNovo, veiculoDTO));
     }
 
     @DeleteMapping("/{id}")

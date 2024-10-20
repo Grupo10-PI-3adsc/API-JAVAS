@@ -1,6 +1,11 @@
 package com.example.CRUD.service;
 
+import com.example.CRUD.dto.maoDeObra.MaoDeObraDTO;
+import com.example.CRUD.dto.maoDeObra.MaoDeObraMapper;
+import com.example.CRUD.dto.veiculo.VeiculoDTO;
 import com.example.CRUD.entity.MaoDeObrEntity;
+import com.example.CRUD.entity.VeiculoEntity;
+import com.example.CRUD.exception.NaoEncontradoException;
 import com.example.CRUD.repository.MaoDeObraRepository;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -41,13 +46,14 @@ public class MaoDeObraService {
         return serviceList.get();
     }
 
-    public MaoDeObrEntity adicionarServico(MaoDeObrEntity maoDeObrEntity, int id) {
-        if (maoDeObraRepository.existsById(maoDeObrEntity.getId())) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Conflito");
+    public MaoDeObrEntity adicionarServico(MaoDeObraDTO maoDeObraDTO, VeiculoDTO veiculoDTO) {
+        Optional<MaoDeObrEntity> maoDeobra = maoDeObraRepository.findByCod(maoDeObraDTO.getCod());
+
+        if (!maoDeobra.isPresent()) {
+            MaoDeObrEntity paraDto = MaoDeObraMapper.toEntity(maoDeObraDTO,veiculoDTO);
+            return maoDeObraRepository.save(paraDto);
         }
-        maoDeObrEntity.setId(null);
-        maoDeObrEntity.setFkCliente(id);
-        return maoDeObraRepository.save(maoDeObrEntity);
+        throw new NaoEncontradoException(HttpStatus.NOT_FOUND, "Já Cadastrado");
     }
 
     public MaoDeObrEntity atualizarServico(MaoDeObrEntity maoDeObrEntity,int id) {
