@@ -1,16 +1,21 @@
 package com.example.CRUD.controller;
 
 import com.example.CRUD.dto.maoDeObra.MaoDeObraDTO;
+import com.example.CRUD.dto.maoDeObra.MaoDeObraMapper;
+import com.example.CRUD.dto.maoDeObra.MaoDeObraResponseDto;
 import com.example.CRUD.dto.veiculo.VeiculoDTO;
 import com.example.CRUD.entity.MaoDeObrEntity;
 import com.example.CRUD.repository.MaoDeObraRepository;
 import com.example.CRUD.service.MaoDeObraService;
+import io.swagger.v3.oas.annotations.Hidden;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Hidden
 @RestController
 @RequestMapping("/mao-de-obra")
 public class MaoDeObraController {
@@ -42,8 +47,11 @@ public class MaoDeObraController {
     }
 
     @PostMapping()
-    public ResponseEntity<MaoDeObrEntity> criarMaoDeObra(@RequestBody MaoDeObraDTO maoDeObraNovo, @RequestBody VeiculoDTO veiculoDTO) {
-        return ResponseEntity.ok(maoDeObraService.adicionarServico(maoDeObraNovo, veiculoDTO));
+    public ResponseEntity<MaoDeObraResponseDto> cadastrar(@RequestBody @Valid MaoDeObraDTO maoDeObraDto) {
+        MaoDeObrEntity maoDeObra = MaoDeObraMapper.toEntity(maoDeObraDto);
+        MaoDeObrEntity novaMaoDeObra = maoDeObraService.adicionarServico(maoDeObra, maoDeObraDto.getFkVeiculo());
+        MaoDeObraResponseDto responseDto = MaoDeObraMapper.toDto(novaMaoDeObra);
+        return ResponseEntity.created(null).body(responseDto);
     }
 
     @DeleteMapping("/{id}")

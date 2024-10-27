@@ -1,16 +1,12 @@
 package com.example.CRUD.dto.veiculo;
 
-import com.example.CRUD.entity.UserEntity;
-import lombok.AllArgsConstructor;
+import com.example.CRUD.dto.user.UserDTO;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
 @Builder
-public class VeiculoDTO {
+public class VeiculoResponseDto {
 
     private String placa;
     private String marca;
@@ -18,6 +14,13 @@ public class VeiculoDTO {
     private Integer ano;
     private String cor;
     private String chassi;
-    private Integer fkUser;
+    private UserDto fkuser;
 
+    @Data
+    @Builder
+    public static class UserDto {
+        private Integer id;
+        private String nome;
+        private String telefone;
+    }
 }

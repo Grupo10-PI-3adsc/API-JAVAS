@@ -1,15 +1,13 @@
 package com.example.CRUD.dto.produto;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
 @Data
 @Builder
-public class ProdutoDTO {
+public class ProdutoResponseDto {
 
     private String nome;
     private String descricao;

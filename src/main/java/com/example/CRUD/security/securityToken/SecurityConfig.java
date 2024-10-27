@@ -24,36 +24,50 @@ public class SecurityConfig {
     private CustomUserDetailsService userDextailsService;
 
     @Autowired
-    SecurityFilter securityFilter;
+    private SecurityFilter securityFilter;
+
+    @Autowired
+    private CustomAccessDeniedHandler accessDeniedHandler;  // Injetando o AccessDeniedHandler
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable())
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .csrf(csrf -> csrf.disable())  // Desabilitar CSRF para facilitar a API stateless
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))  // Política de sessão stateless para APIs REST
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(HttpMethod.POST, "/usuarios").hasAnyRole("sys_admin", "gerente", "func")
-                        .requestMatchers(HttpMethod.POST, "/produtos").hasAnyRole("sys_admin", "gerente", "func")
-                        .requestMatchers(HttpMethod.POST, "/mao-de-obra").hasAnyRole("sys_admin", "gerente", "func", "user")
-                        .requestMatchers(HttpMethod.POST, "/funcionario").hasAnyRole("sys_admin", "gerente")
-                        .requestMatchers(HttpMethod.POST, "/enderecos").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/enderecos/**").permitAll()
+                        // Permissões POST
+                        .requestMatchers(HttpMethod.POST, "/usuarios").hasAnyRole("SYS_ADM", "GERENTE", "FUNC")
+                        .requestMatchers(HttpMethod.POST, "/produtos").hasAnyRole("SYS_ADM", "GERENTE", "FUNC")
+                        .requestMatchers(HttpMethod.POST, "/mao-de-obra").hasAnyRole("SYS_ADM", "GERENTE", "FUNC", "USER")
+                        .requestMatchers(HttpMethod.POST, "/funcionario").hasAnyRole("SYS_ADM", "GERENTE")
 
-                        .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/auth/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/auth/register/**").permitAll()
+                        // Permissões GET
+                        .requestMatchers(HttpMethod.GET, "/usuarios").hasAnyRole("SYS_ADM", "GERENTE", "FUNC")
+                        .requestMatchers(HttpMethod.GET, "/produtos/listar-produtos").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/produtos/{id}").permitAll()
 
-                        .requestMatchers(HttpMethod.GET, "/produtos/listar-produtos").hasAnyRole("sys_admin", "gerente", "func", "user")
+                        // Permissões PUT
+                        .requestMatchers(HttpMethod.PUT, "/produtos/{id}").hasAnyRole("SYS_ADM", "GERENTE")
+                        .requestMatchers(HttpMethod.PUT, "/usuarios").hasAnyRole("SYS_ADM", "GERENTE", "FUNC")
+                        .requestMatchers(HttpMethod.PUT, "/mao-de-obra").hasAnyRole("SYS_ADM", "GERENTE", "FUNC")
+                        .requestMatchers(HttpMethod.PUT, "/enderecos/inativar-endereco").hasAnyRole("SYS_ADM", "GERENTE", "FUNC")
+                        .requestMatchers(HttpMethod.PUT, "/usuarios/inativar-cliente").hasAnyRole("SYS_ADM", "GERENTE", "FUNC")
 
-                        .requestMatchers(HttpMethod.PUT, "/usuarios/").hasAnyRole("sys_admin", "gerente", "func")
-                        .requestMatchers(HttpMethod.PUT, "/mao-de-obra/").hasAnyRole("sys_admin", "gerente", "func")
-                        .requestMatchers(HttpMethod.PUT, "/enderecos/inativar-endereco/").hasAnyRole("sys_admin", "gerente", "func")
-                        .requestMatchers(HttpMethod.PUT, "/usuarios/inativar-cliente/").hasAnyRole("sys_admin", "gerente", "func")
+                        // Permissões DELETE
+                        .requestMatchers(HttpMethod.DELETE, "/produtos/{id}").hasAnyRole("SYS_ADM", "GERENTE")
 
+                        // Swagger
+                        .requestMatchers("/swagger-ui.html", "/v3/api-docs/**", "/swagger-ui/**").permitAll()
+                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**", "/swagger-ui.html").permitAll()
+                        .requestMatchers("/actuator/**").permitAll()
+                        .requestMatchers("/**").permitAll()
+                        // Qualquer outra requisição precisa ser autenticada
                         .anyRequest().authenticated()
                 )
-                .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class);
+                .exceptionHandling(exceptionHandling -> exceptionHandling
+                        .accessDeniedHandler(accessDeniedHandler)  // Define o manipulador de acesso negado personalizado
+                )
+                .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class);  // Filtro de autenticação JWT
         return http.build();
     }
 
@@ -67,3 +81,10 @@ public class SecurityConfig {
         return authenticationConfiguration.getAuthenticationManager();
     }
 }
+
+//TODO: SYS_ADM
+//{
+//        "email": "ana.paula@example.com",
+//        "password": "SenhaSegura456"
+//}
+//TODO: Gerente

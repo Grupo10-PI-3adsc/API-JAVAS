@@ -24,6 +24,8 @@ public class MaoDeObraService {
 
     @Autowired
     private MaoDeObraRepository maoDeObraRepository;
+    @Autowired
+    private VeiculoService veiculoService;
 
 
     public List<MaoDeObrEntity> listar() {
@@ -31,7 +33,7 @@ public class MaoDeObraService {
     }
 
     public List<MaoDeObrEntity> pesquisarPorCliente(int id) {
-        List<MaoDeObrEntity> listarPorCliente = maoDeObraRepository.findAllByFkCliente(id);
+        List<MaoDeObrEntity> listarPorCliente = maoDeObraRepository.findAllByfkUser(id);
         if (listarPorCliente.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Esse cliente não serviços");
         }
@@ -46,14 +48,14 @@ public class MaoDeObraService {
         return serviceList.get();
     }
 
-    public MaoDeObrEntity adicionarServico(MaoDeObraDTO maoDeObraDTO, VeiculoDTO veiculoDTO) {
-        Optional<MaoDeObrEntity> maoDeobra = maoDeObraRepository.findByCod(maoDeObraDTO.getCod());
-
-        if (!maoDeobra.isPresent()) {
-            MaoDeObrEntity paraDto = MaoDeObraMapper.toEntity(maoDeObraDTO,veiculoDTO);
-            return maoDeObraRepository.save(paraDto);
+    public MaoDeObrEntity adicionarServico(MaoDeObrEntity maoDeObrEntity, Integer id) {
+        VeiculoEntity veiculo = veiculoService.getById(id);
+        if (maoDeObrEntity.getId() != null) {
+            throw new IllegalArgumentException("O id deve ser nulo para ser salvo");
         }
-        throw new NaoEncontradoException(HttpStatus.NOT_FOUND, "Já Cadastrado");
+        maoDeObrEntity.setId(null);
+        maoDeObrEntity.setFkVeiculo(veiculo);
+        return maoDeObraRepository.save(maoDeObrEntity);
     }
 
     public MaoDeObrEntity atualizarServico(MaoDeObrEntity maoDeObrEntity,int id) {
@@ -66,7 +68,7 @@ public class MaoDeObraService {
     public MaoDeObrEntity cancelarServico(int fkCliente) {
         String cancelarServico = "Cancelado";
 
-        Optional<MaoDeObrEntity> servico = maoDeObraRepository.findByFkCliente(fkCliente);
+        Optional<MaoDeObrEntity> servico = maoDeObraRepository.findByfkUser(fkCliente);
         if(servico.isPresent()) {
             servico.get().setStatus(cancelarServico);
             maoDeObraRepository.save(servico.get());

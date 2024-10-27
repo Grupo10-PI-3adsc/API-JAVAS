@@ -6,7 +6,7 @@ import com.example.CRUD.entity.UserEntity;
 
 public class MaoDeObraMapper {
 
-    public static MaoDeObrEntity toEntity(MaoDeObraDTO maoDeObraDTO, VeiculoDTO veiculoDTO){
+    public static MaoDeObrEntity toEntity(MaoDeObraDTO maoDeObraDTO){
         if (maoDeObraDTO == null) return null;
 
         return MaoDeObrEntity
@@ -19,13 +19,37 @@ public class MaoDeObraMapper {
                 .responsavel(maoDeObraDTO.getResponsavel())
                 .horaEstimada(maoDeObraDTO.getHoraEstimada())
                 .dataInicio(maoDeObraDTO.getDataInicio())
-                .fkVeiculo(MaoDeObraDTO.VeiculoResponseDto
-                        .builder()
-                        .ano(veiculoDTO.getAno())
-                        .placa(veiculoDTO.getPlaca())
-                        .modelo(veiculoDTO.getModelo())
-                        .fkUser(veiculoDTO.getFkuser())
-                        .build())
+                .fkUser(maoDeObraDTO.getFkUser())
+                .build();
+
+    }
+
+    public static MaoDeObraResponseDto toDto(MaoDeObrEntity maoDeObrEntity){
+        if (maoDeObrEntity == null) return null;
+
+        MaoDeObraResponseDto.VeiculoResponseDto veiculoResponseDto = null;
+        if (maoDeObrEntity.getFkVeiculo() != null) {
+            veiculoResponseDto = MaoDeObraResponseDto.VeiculoResponseDto
+                    .builder()
+                    .placa(maoDeObrEntity.getFkVeiculo().getPlaca())
+                    .modelo(maoDeObrEntity.getFkVeiculo().getModelo())
+                    .ano(maoDeObrEntity.getFkVeiculo().getAno())
+                    .chassi(maoDeObrEntity.getFkVeiculo().getChassi())
+                    .build();
+        }
+
+        return MaoDeObraResponseDto
+                .builder()
+                .cod(maoDeObrEntity.getCod())
+                .nome(maoDeObrEntity.getNome())
+                .descricao(maoDeObrEntity.getDescricao())
+                .custoProduto(maoDeObrEntity.getCustoProduto())
+                .precoMaoDeObra(maoDeObrEntity.getPrecoMaoDeObra())
+                .responsavel(maoDeObrEntity.getResponsavel())
+                .horaEstimada(maoDeObrEntity.getHoraEstimada())
+                .dataInicio(maoDeObrEntity.getDataInicio())
+                .fkUser(maoDeObrEntity.getFkUser())
+                .fkVeiculo(veiculoResponseDto)
                 .build();
 
     }

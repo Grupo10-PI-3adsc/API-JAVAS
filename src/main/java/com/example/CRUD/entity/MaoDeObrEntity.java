@@ -31,7 +31,7 @@ public class MaoDeObrEntity implements Pedido {
     private Integer fkUser;
 
     @ManyToOne
-    @JoinColumn(name = "fkVeiculo", referencedColumnName = "Id")
+    @JoinColumn(name = "fkVeiculo", referencedColumnName = "id")
     private VeiculoEntity fkVeiculo;
 
     @Override

@@ -12,6 +12,6 @@ public interface ProdutoRepository extends JpaRepository<ProdutoEntity, Integer>
 
     List<ProdutoEntity> findAllByCategoria(String categoria);
 
-    @Query("SELECT SUM(p.qtdProdutoEstoque) FROM ProdutoEntity p")
+    @Query("SELECT SUM(p.qtdEstoque) FROM ProdutoEntity p")
     Long sumQuantidade();
 }
