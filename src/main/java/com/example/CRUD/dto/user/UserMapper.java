@@ -8,8 +8,6 @@ public class UserMapper {
     public static UserDTO toDTO(UserEntity user, String token) {
         if (user == null) return null;
 
-        EnderecoEntity endereco = user.getFkEndereco();
-
         return UserDTO
                 .builder()
                 .nome(user.getNome())
@@ -18,22 +16,6 @@ public class UserMapper {
                 .telefone(user.getTelefone())
                 .senha(user.getPassword())
                 .role(user.getRole())
-                .endereco(
-                        UserDTO.UsuarioEnderecoResponseDto
-                                .builder()
-                                .bairro(endereco.getBairro())
-                                .cep(endereco.getCep())
-                                .complemento(endereco.getComplemento())
-                                .ddd(endereco.getDdd())
-                                .gia(endereco.getGia())
-                                .ibge(endereco.getIbge())
-                                .uf(endereco.getUf())
-                                .localidade(endereco.getLocalidade())
-                                .siafi(endereco.getSiafi())
-                                .logradouro(endereco.getLogradouro())
-                                .build()
-                )
-                .token(token)
                 .build();
 
     }

@@ -7,6 +7,9 @@ import com.example.CRUD.entity.UserEntity;
 import com.example.CRUD.repository.UserRepository;
 import com.example.CRUD.service.UserService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,34 +27,58 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    @Operation(description = "Mostra os usuários cadastrados")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Lista de usuários retornada com sucesso"),
+            @ApiResponse(responseCode = "204", description = "Não há usuários cadastrados")
+    })
     @GetMapping
     public ResponseEntity<List<UserEntity>> listar() {
         List<UserEntity> user = userService.listarCliente();
 
-        if(user.isEmpty()) {
+        if (user.isEmpty()) {
             return ResponseEntity.status(204).build();
         }
-        return ResponseEntity.status(201).body(user);
+        return ResponseEntity.status(200).body(user);  // Corrigido para 200 OK ao retornar lista
     }
 
+    @Operation(description = "Busca um usuário por ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Usuário encontrado"),
+            @ApiResponse(responseCode = "404", description = "Usuário não encontrado")
+    })
     @GetMapping("/{id}")
-    public ResponseEntity<UserEntity> buscarPorIndice (@PathVariable int id) {
-       return ResponseEntity.ok(userService.userPorId(id));
+    public ResponseEntity<UserEntity> buscarPorIndice(@PathVariable int id) {
+        UserEntity user = userService.userPorId(id);
+        if (user != null) {
+            return ResponseEntity.ok(user);
+        } else {
+            return ResponseEntity.status(404).build();
+        }
     }
 
+    @Operation(description = "Atualiza um usuário existente")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Usuário atualizado com sucesso"),
+            @ApiResponse(responseCode = "404", description = "Usuário não encontrado")
+    })
     @PutMapping("/{id}")
-    public ResponseEntity<UserEntity> atualizar(@PathVariable Integer id, @RequestBody UserEntity userEntity){
-        if(userRepository.existsById(id)) {
+    public ResponseEntity<UserEntity> atualizar(@PathVariable Integer id, @RequestBody UserEntity userEntity) {
+        if (userRepository.existsById(id)) {
             userEntity.setId(id);
             return ResponseEntity.status(200).body(userRepository.save(userEntity));
         }
-
         return ResponseEntity.status(404).build();
     }
 
-    @PutMapping("/inativar-cliente/{id}")
+    @Operation(description = "Inativa um usuário (cliente) pelo ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Usuário inativado com sucesso"),
+            @ApiResponse(responseCode = "404", description = "Usuário não encontrado")
+    })
+    @PutMapping("/inativar/{id}")
     public ResponseEntity<Void> deletarCliente(@PathVariable Integer id) {
-        if(userRepository.existsById(id)) {
+        if (userRepository.existsById(id)) {
             userService.inativarCliente(id);
             return ResponseEntity.status(204).build();
         }
@@ -128,7 +155,6 @@ public class UserController {
         List<UserEntity> users = userService.importar(nomeArquivo);
         return ResponseEntity.created(null).body(users.stream().map(UserMapper :: toDTO).toList());
     }
-
 
 
 }

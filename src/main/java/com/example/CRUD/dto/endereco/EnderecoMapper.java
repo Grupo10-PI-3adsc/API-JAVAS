@@ -25,4 +25,34 @@ public class EnderecoMapper {
                 .uf(cep.getUf())
                 .build();
     }
+
+    public static EnderecoResponseDto toDto(EnderecoEntity entity) {
+        if (entity == null) return null;
+
+        EnderecoResponseDto.UserResponseDto userDto = null;
+        if (entity.getBairro() != null) {
+            userDto = EnderecoResponseDto.UserResponseDto
+                    .builder()
+                    .nome(entity.getFkUser().getNome())
+                    .telefone(entity.getFkUser().getTelefone())
+                    .cpfCnpj(entity.getFkUser().getCpfCnpj())
+                    .build();
+        }
+
+        return EnderecoResponseDto
+                .builder()
+                .bairro(entity.getBairro())
+                .cep(entity.getCep())
+                .complemento(entity.getComplemento())
+                .ddd(entity.getDdd())
+                .gia(entity.getGia())
+                .ibge(entity.getIbge())
+                .localidade(entity.getLocalidade())
+                .logradouro(entity.getLogradouro())
+                .siafi(entity.getSiafi())
+                .uf(entity.getUf())
+                .fkUser(userDto)
+                .build();
+
+    }
 }

@@ -22,8 +22,8 @@ public class ProdutoService {
     private ProdutoRepository produtoRepository;
 
     public ProdutoEntity save(ProdutoEntity produto) {
-        if(produtoRepository.existsById(produto.getId())) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Já existe um produto nesse id");
+        if(produto.getId() != null) {
+            throw new IllegalArgumentException("O id deve ser nulo para ser salvo");
         }
         produto.setId(null);
         return produtoRepository.save(produto);

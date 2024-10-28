@@ -51,21 +51,31 @@ public class UserEntity implements UserDetails {
     @Column(name = "Funcao")
     private permissionSets role;
 
-    @ManyToOne
-    @JoinColumn(name = "fk_endereco_id", referencedColumnName = "id_endereco")
-    private EnderecoEntity fkEndereco;
-
-
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        if(this.role == permissionSets.SYS_ADM)
+        if(getRole() == permissionSets.SYS_ADM) {
             return List.of(
                     new SimpleGrantedAuthority("ROLE_SYS_ADM"),
                     new SimpleGrantedAuthority("ROLE_GERENTE"),
-                    new SimpleGrantedAuthority("ROLE_USER"));
 
-        else return List.of(new SimpleGrantedAuthority("user"));
+                    new SimpleGrantedAuthority("ROLE_FUNC"),
+                    new SimpleGrantedAuthority("ROLE_USER"));
+        }
+        if (this.role.equals(permissionSets.GERENTE.getRole())) {
+            return List.of(
+                    new SimpleGrantedAuthority("ROLE_GERENTE"),
+                    new SimpleGrantedAuthority("ROLE_FUNC"),
+                    new SimpleGrantedAuthority("ROLE_USER"));
+        }
+        if (this.role.equals(permissionSets.FUNC.getRole())) {
+            return List.of(
+                    new SimpleGrantedAuthority("ROLE_FUNC"),
+                    new SimpleGrantedAuthority("ROLE_USER"));
+        } else {
+            return List.of(new SimpleGrantedAuthority("ROLE_USER"));
+        }
+      
     }
 
     @Override

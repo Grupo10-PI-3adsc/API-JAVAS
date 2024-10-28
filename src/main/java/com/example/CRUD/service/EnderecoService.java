@@ -27,25 +27,14 @@ public class EnderecoService {
 
     public EnderecoEntity save(EnderecoEntity novoEndereco, Integer idUser) {
         Optional<EnderecoEntity> enderecoOpt = enderecoRepository.findByCep(novoEndereco.getCep());
+        Optional<UserEntity> user = userRepository.findById(idUser);
 
-        if (enderecoOpt.isPresent()) {
-
-            Optional<UserEntity> user = userRepository.findById(idUser);
-            if(user.isEmpty()) {
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-            }
-
-            if (user.get().getFkEndereco().getId() == enderecoOpt.get().getId()) {
-
-                throw new ResponseStatusException(HttpStatus.CONFLICT, ("Usuario já possui esse endereço"));
-
-            }
-
-            user.get().setFkEndereco(enderecoOpt.get());
-
+        if(user.isPresent()) {
+            throw new ResponseStatusException(HttpStatus.NO_CONTENT, "usuário já tem um endereço cadastrado");
         }
 
         novoEndereco.setId(null);
+        novoEndereco.setFkUser(user.get());
         return enderecoRepository.save(novoEndereco);
     }
 

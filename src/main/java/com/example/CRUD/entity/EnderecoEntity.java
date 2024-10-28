@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 @Entity
 @Table(name = "endereco")
 @Getter
@@ -28,5 +30,9 @@ public class EnderecoEntity {
     private String ddd;
     private String siafi;
     private Boolean isActive = true;
+
+    @ManyToOne
+    @JoinColumn(name = "fk_usuario_id", referencedColumnName = "Id")
+    private UserEntity fkUser;
 
 }

@@ -6,9 +6,11 @@ import com.example.CRUD.dto.user.UserMapper;
 import com.example.CRUD.entity.UserEntity;
 import com.example.CRUD.entity.EnderecoEntity;
 import com.example.CRUD.permissionSets;
+import com.example.CRUD.repository.EnderecoRepository;
 import com.example.CRUD.repository.UserRepository;
 //import io.jsonwebtoken.security.Keys;
 import com.example.CRUD.security.securityToken.TokenService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -27,25 +29,20 @@ import java.util.Scanner;
 @RequiredArgsConstructor
 public class UserService {
 
-    @Autowired
-    private  UserRepository userRepository;
-    @Autowired
-    private  PasswordEncoder passwordEncoder;
-    @Autowired
-    private  TokenService tokenService;
-    @Autowired
-    private  EnderecoService enderecoService;
 
-    public UserEntity save(UserEntity user, Integer enderecoId) {
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final TokenService tokenService;
+    private final EnderecoService enderecoService;
+    private final EnderecoRepository enderecoRepository;
+
+    public UserEntity save(UserEntity user) {
 
         Optional<UserEntity> userEntityOptional =  userRepository.findByEmail(user.getEmail());
 
         if (userEntityOptional.isPresent()){
             throw (new ResponseStatusException(HttpStatus.CONFLICT, "Cliente já cadastrado!"));
         }
-
-        EnderecoEntity endereco = enderecoService.buscarPorId(enderecoId);
-        user.setFkEndereco(endereco);
 
         if(user.getRole() == null) {
            user.setRole(permissionSets.USER);
@@ -86,18 +83,32 @@ public class UserService {
     }
 
 
-    public UserEntity inativarCliente(int id) {
-        Boolean ativo = false;
-        UserEntity user = this.userPorId(id);
-        EnderecoEntity endereco = enderecoService.buscarPorId(id);
+    public UserEntity inativarCliente(int userId) {
+        Boolean inativar = false;
 
-        endereco.setIsActive(ativo);
-        user.setIsActive(ativo);
+        // Buscar o usuário pelo ID
+        UserEntity user = this.userPorId(userId);
+        if (user == null) {
+            throw new EntityNotFoundException("Usuário não encontrado com o ID: " + userId);
+        }
+
+        // Buscar o endereço associado ao usuário. Supondo que você tenha um método para isso.
+        EnderecoEntity endereco = enderecoService.buscarPorId(user.getId());
+        if (endereco == null) {
+            throw new EntityNotFoundException("Endereço não encontrado para o usuário ID: " + userId);
+        }
+
+        // Inativar usuário e endereço
+        user.setIsActive(inativar);
+        endereco.setIsActive(inativar);
+
+        // Salvar as alterações
         userRepository.save(user);
-        endereco.setIsActive(ativo);
-        return user;
+        enderecoRepository.save(endereco);  // Presumindo que você tenha um método salvar no serviço de endereço
 
+        return user;
     }
+
 
     public LoginRequestDTO login(LoginRequestDTO body) {
         UserEntity user = this.userRepository.findByEmail(

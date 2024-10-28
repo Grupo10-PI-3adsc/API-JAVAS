@@ -1,20 +1,16 @@
 package com.example.CRUD.dto.maoDeObra;
 
 import com.example.CRUD.entity.UserEntity;
-import com.example.CRUD.entity.VeiculoEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.security.Permission;
 import java.time.LocalDate;
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 @Builder
-public class MaoDeObraDTO {
+public class MaoDeObraResponseDto {
 
     private Integer cod;
     private String nome;
@@ -26,6 +22,14 @@ public class MaoDeObraDTO {
     private LocalDate horaEstimada;
     private LocalDate dataInicio;
     private Integer fkUser;
-    private Integer fkVeiculo;
+    private VeiculoResponseDto fkVeiculo;
 
+    @Data
+    @Builder
+    public static class VeiculoResponseDto {
+        private String placa;
+        private String modelo;
+        private Integer ano;
+        private String chassi;
+    }
 }
