@@ -1,4 +1,8 @@
 package com.example.CRUD.controller;
+import com.example.CRUD.dto.user.RegisterRequestDTO;
+import com.example.CRUD.dto.user.UserDTO;
+import com.example.CRUD.dto.user.UserDTOResponse;
+import com.example.CRUD.dto.user.UserMapper;
 import com.example.CRUD.entity.UserEntity;
 import com.example.CRUD.repository.UserRepository;
 import com.example.CRUD.service.UserService;
@@ -10,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @RestController
@@ -78,4 +84,77 @@ public class UserController {
         }
         return ResponseEntity.status(404).build();
     }
+
+    @GetMapping("/ordernar")
+    public ResponseEntity<List<UserDTOResponse>> ordernar () {
+
+        List<UserEntity> usuarios = userService.ordernar();
+
+        return usuarios.isEmpty() ?
+                ResponseEntity.noContent().build() :
+                ResponseEntity.ok(usuarios
+                        .stream().map(UserMapper::toDTO).toList());
+
+    }
+
+//    @GetMapping("/ordernar")
+//    public ResponseEntity<List<UserDTOResponse>> ordernar (
+//            @RequestBody List<RegisterRequestDTO> users
+//    ) {
+//
+//        List<UserEntity> userE = users.stream().map(UserMapper :: toEntity).toList();
+//
+//        UserEntity[] userEntities = new UserEntity[users.size()];
+//
+//        for (int i = 0; i < users.size(); i++) {
+//            userEntities[i] = userE.get(i);
+//        }
+//
+//        userEntities = userService.ordernar(userEntities);
+//
+//        List<UserEntity> users2 = new ArrayList<>(Arrays.asList(userEntities));
+//
+//        return users2.isEmpty() ?
+//            ResponseEntity.noContent().build() :
+//            ResponseEntity.ok(users2
+//                    .stream().map(UserMapper::toDTO).toList());
+//    }
+
+    @GetMapping("/pesquisar")
+    public ResponseEntity<UserDTOResponse> pesquisar(
+            @RequestParam String nome
+    ){
+
+        UserEntity usuario = userService.pesquisaBinaria(nome);
+
+        return usuario.isEmpty() ?
+                ResponseEntity.noContent().build() :
+                ResponseEntity.ok(UserMapper.toDTO(usuario));
+
+    }
+
+    @GetMapping("/exportar")
+    public ResponseEntity<Void> exportar(
+            @RequestParam String nome
+    ){
+
+        List<UserEntity> usuario = userService.listarCliente();
+
+        userService.exportar(nome, usuario);
+
+        return usuario.isEmpty() ?
+                ResponseEntity.noContent().build() :
+                ResponseEntity.ok().build();
+
+    }
+
+    @PostMapping("/importar")
+    public ResponseEntity<List<UserDTOResponse>> importar(
+                @RequestParam String nomeArquivo
+    ){
+        List<UserEntity> users = userService.importar(nomeArquivo);
+        return ResponseEntity.created(null).body(users.stream().map(UserMapper :: toDTO).toList());
+    }
+
+
 }

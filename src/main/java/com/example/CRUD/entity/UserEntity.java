@@ -58,6 +58,7 @@ public class UserEntity implements UserDetails {
             return List.of(
                     new SimpleGrantedAuthority("ROLE_SYS_ADM"),
                     new SimpleGrantedAuthority("ROLE_GERENTE"),
+
                     new SimpleGrantedAuthority("ROLE_FUNC"),
                     new SimpleGrantedAuthority("ROLE_USER"));
         }
@@ -74,6 +75,7 @@ public class UserEntity implements UserDetails {
         } else {
             return List.of(new SimpleGrantedAuthority("ROLE_USER"));
         }
+      
     }
 
     @Override
@@ -104,6 +106,10 @@ public class UserEntity implements UserDetails {
     @Override
     public boolean isEnabled() {
         return UserDetails.super.isEnabled();
+    }
+
+    public boolean isEmpty(){
+        return true;
     }
 }
 
