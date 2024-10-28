@@ -11,4 +11,6 @@ import java.util.Optional;
 public interface EnderecoRepository extends JpaRepository<EnderecoEntity, Integer> {
 
     Optional<EnderecoEntity> findByCep(String cep);
+
+    Optional<EnderecoEntity> findByCepAndNumero(String cep, Integer numero);
 }

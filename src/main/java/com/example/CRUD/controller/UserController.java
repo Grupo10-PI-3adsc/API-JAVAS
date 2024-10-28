@@ -1,10 +1,13 @@
 package com.example.CRUD.controller;
+import com.example.CRUD.dto.endereco.EnderecoResponseDto;
 import com.example.CRUD.dto.user.RegisterRequestDTO;
 import com.example.CRUD.dto.user.UserDTO;
 import com.example.CRUD.dto.user.UserDTOResponse;
 import com.example.CRUD.dto.user.UserMapper;
+import com.example.CRUD.entity.EnderecoEntity;
 import com.example.CRUD.entity.UserEntity;
 import com.example.CRUD.repository.UserRepository;
+import com.example.CRUD.service.EnderecoService;
 import com.example.CRUD.service.UserService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -26,6 +29,8 @@ public class UserController {
     private UserRepository userRepository;
     @Autowired
     private UserService userService;
+    @Autowired
+    private EnderecoService enderecoService;
 
     @Operation(description = "Mostra os usuários cadastrados")
     @ApiResponses(value = {
@@ -63,12 +68,13 @@ public class UserController {
             @ApiResponse(responseCode = "404", description = "Usuário não encontrado")
     })
     @PutMapping("/{id}")
-    public ResponseEntity<UserEntity> atualizar(@PathVariable Integer id, @RequestBody UserEntity userEntity) {
-        if (userRepository.existsById(id)) {
-            userEntity.setId(id);
-            return ResponseEntity.status(200).body(userRepository.save(userEntity));
-        }
-        return ResponseEntity.status(404).build();
+    public ResponseEntity<UserDTOResponse> atualizar(
+            @PathVariable Integer id,
+            @RequestBody RegisterRequestDTO userEntity) {
+        EnderecoEntity endereco = userEntity.getEnderecoId() != null && userEntity.getEnderecoId() > 0
+                ? enderecoService.buscarPorId(userEntity.getEnderecoId()) : null;
+        UserEntity user = userService.atualizar(UserMapper.toEntity(userEntity), id, endereco);
+        return ResponseEntity.status(200).body(UserMapper.toDTO(user));
     }
 
     @Operation(description = "Inativa um usuário (cliente) pelo ID")
@@ -78,11 +84,8 @@ public class UserController {
     })
     @PutMapping("/inativar/{id}")
     public ResponseEntity<Void> deletarCliente(@PathVariable Integer id) {
-        if (userRepository.existsById(id)) {
-            userService.inativarCliente(id);
-            return ResponseEntity.status(204).build();
-        }
-        return ResponseEntity.status(404).build();
+        UserEntity user = userService.inativarCliente(id);
+        return ResponseEntity.status(204).build();
     }
 
     @GetMapping("/ordernar")

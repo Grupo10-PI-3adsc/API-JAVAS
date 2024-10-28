@@ -30,9 +30,6 @@ public class EnderecoEntity {
     private String ddd;
     private String siafi;
     private Boolean isActive = true;
-
-    @ManyToOne
-    @JoinColumn(name = "fk_usuario_id", referencedColumnName = "Id")
-    private UserEntity fkUser;
+    private Integer numero;
 
 }

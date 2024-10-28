@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class UserDTOResponse {
 
+    private Integer id;
     private String nome;
     private String cpfCnpj;
     private String telefone;

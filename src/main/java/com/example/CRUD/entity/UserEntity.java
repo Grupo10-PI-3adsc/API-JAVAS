@@ -51,6 +51,9 @@ public class UserEntity implements UserDetails {
     @Column(name = "Funcao")
     private permissionSets role;
 
+    @ManyToOne
+    @JoinColumn(name = "fk_endereco_id", referencedColumnName = "id_endereco")
+    private EnderecoEntity fkEndereco;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

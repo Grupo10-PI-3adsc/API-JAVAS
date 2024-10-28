@@ -33,8 +33,6 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final TokenService tokenService;
-    private final EnderecoService enderecoService;
-    private final EnderecoRepository enderecoRepository;
 
     public UserEntity save(UserEntity user) {
 
@@ -48,7 +46,10 @@ public class UserService {
            user.setRole(permissionSets.USER);
         }
 
+
+
         return userRepository.save(user);
+
     }
 
     public List<UserEntity> listarCliente() {
@@ -88,23 +89,12 @@ public class UserService {
 
         // Buscar o usuário pelo ID
         UserEntity user = this.userPorId(userId);
-        if (user == null) {
-            throw new EntityNotFoundException("Usuário não encontrado com o ID: " + userId);
-        }
-
-        // Buscar o endereço associado ao usuário. Supondo que você tenha um método para isso.
-        EnderecoEntity endereco = enderecoService.buscarPorId(user.getId());
-        if (endereco == null) {
-            throw new EntityNotFoundException("Endereço não encontrado para o usuário ID: " + userId);
-        }
 
         // Inativar usuário e endereço
         user.setIsActive(inativar);
-        endereco.setIsActive(inativar);
 
         // Salvar as alterações
         userRepository.save(user);
-        enderecoRepository.save(endereco);  // Presumindo que você tenha um método salvar no serviço de endereço
 
         return user;
     }
@@ -290,7 +280,7 @@ public class UserService {
                                                 cpfCnpj,
                                                 role,
                                                 telefone,
-                                                fkEndereco)), fkEndereco)
+                                                fkEndereco)))
                 );
             }
 
@@ -302,5 +292,14 @@ public class UserService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
 
+    }
+
+    public UserEntity atualizar(UserEntity userEntity, Integer id, EnderecoEntity enderecoEntity) {
+        userEntity.setId(id);
+        if (!userRepository.existsById(userEntity.getId())){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+        if (enderecoEntity != null) userEntity.setFkEndereco(enderecoEntity);
+        return userRepository.save(userEntity);
     }
 }

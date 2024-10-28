@@ -15,5 +15,6 @@ public class RegisterRequestDTO{
     private String cpfCnpj;
     private permissionSets role;
     private String telefone;
+    private Integer enderecoId;
 
 }

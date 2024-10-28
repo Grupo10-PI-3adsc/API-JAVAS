@@ -1,12 +1,10 @@
 package com.example.CRUD.security.controller;
 
-import com.example.CRUD.dto.user.UserDTO;
-import com.example.CRUD.dto.user.UserMapper;
+import com.example.CRUD.dto.user.*;
 import com.example.CRUD.repository.UserRepository;
-import com.example.CRUD.dto.user.LoginRequestDTO;
-import com.example.CRUD.dto.user.RegisterRequestDTO;
 import com.example.CRUD.entity.UserEntity;
 import com.example.CRUD.security.securityToken.TokenService;
+import com.example.CRUD.service.EnderecoService;
 import com.example.CRUD.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +22,7 @@ import java.util.Optional;
 public class AuthController {
     private final UserRepository userRepository;
     private final UserService userService;
+    private final EnderecoService enderecoService;
     private final PasswordEncoder passwordEncoder;
     private final TokenService tokenService;
 
@@ -46,9 +45,13 @@ public class AuthController {
 
         UserEntity usuarioSalvo = this.userService.save(usuarioParaSalvar);
 
+        if( body.getEnderecoId() != null && body.getEnderecoId() >= 0 ){
+            usuarioSalvo.setFkEndereco(enderecoService.buscarPorId(body.getEnderecoId()));
+        }
+
         String token = this.tokenService.generateToken(usuarioSalvo);
 
-        UserDTO userDTO = UserMapper.toDTO(usuarioSalvo, token);
+        UserDTOResponse userDTO = UserMapper.toDTO(usuarioSalvo, token);
 
         return ResponseEntity.created(null).body(userDTO);
 

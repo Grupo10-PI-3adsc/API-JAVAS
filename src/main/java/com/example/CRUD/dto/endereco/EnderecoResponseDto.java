@@ -10,6 +10,7 @@ public class EnderecoResponseDto {
 
     private String cep;
     private String logradouro;
+    private Integer numero;
     private String complemento;
     private String bairro;
     private String localidade;
@@ -19,14 +20,5 @@ public class EnderecoResponseDto {
     private String ddd;
     private String siafi;
     private Boolean isActive;
-    private UserResponseDto fkUser;
 
-    @Data
-    @Builder
-    public static class UserResponseDto {
-        private String nome;
-        private String cpfCnpj;
-        private String telefone;
-        private permissionSets role;
-    }
 }

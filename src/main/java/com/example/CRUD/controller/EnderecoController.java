@@ -36,11 +36,12 @@ public class EnderecoController {
     })
     @PostMapping("/{id}")
     public ResponseEntity<EnderecoResponseDto> cadastrarEndereco(
-            @RequestParam String cep, @PathVariable Integer id
+            @RequestParam String cep,
+            @RequestParam Integer numero
     ) {
         Cep viaCep = ViaCepClient.findCep(cep);
         EnderecoEntity endereco = EnderecoMapper.toEntity(viaCep);
-        EnderecoEntity novoEndereco = enderecoService.save(endereco, id);
+        EnderecoEntity novoEndereco = enderecoService.save(endereco, numero);
         EnderecoResponseDto responseDto = EnderecoMapper.toDto(novoEndereco);
         return ResponseEntity.created(null).body(responseDto);
     }

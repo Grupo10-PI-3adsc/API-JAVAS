@@ -5,11 +5,12 @@ import com.example.CRUD.security.securityToken.TokenService;
 
 public class UserMapper {
 
-    public static UserDTO toDTO(UserEntity user, String token) {
+    public static UserDTOResponse toDTO(UserEntity user, String token) {
         if (user == null) return null;
 
-        return UserDTO
+        return UserDTOResponse
                 .builder()
+                .id(user.getId())
                 .nome(user.getNome())
                 .email(user.getEmail())
                 .cpfCnpj(user.getCpfCnpj())

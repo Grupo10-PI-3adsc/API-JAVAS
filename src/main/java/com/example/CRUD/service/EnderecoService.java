@@ -23,19 +23,18 @@ public class EnderecoService {
     @Autowired
     private EnderecoRepository enderecoRepository;
     @Autowired
-    private UserRepository userRepository;
+    private UserService userService;
 
-    public EnderecoEntity save(EnderecoEntity novoEndereco, Integer idUser) {
-        Optional<EnderecoEntity> enderecoOpt = enderecoRepository.findByCep(novoEndereco.getCep());
-        Optional<UserEntity> user = userRepository.findById(idUser);
+    public EnderecoEntity save(EnderecoEntity novoEndereco, Integer numero) {
+        novoEndereco.setNumero(numero);
+        Optional<EnderecoEntity> endereco = enderecoRepository.findByCepAndNumero(
+                novoEndereco.getCep(), numero);
 
-        if(user.isPresent()) {
-            throw new ResponseStatusException(HttpStatus.NO_CONTENT, "usuário já tem um endereço cadastrado");
+        if (endereco.isPresent()){
+            throw new ResponseStatusException(HttpStatus.CONFLICT);
         }
+            return enderecoRepository.save(novoEndereco);
 
-        novoEndereco.setId(null);
-        novoEndereco.setFkUser(user.get());
-        return enderecoRepository.save(novoEndereco);
     }
 
     public List<EnderecoEntity> listarEnderecos() {

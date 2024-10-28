@@ -29,15 +29,6 @@ public class EnderecoMapper {
     public static EnderecoResponseDto toDto(EnderecoEntity entity) {
         if (entity == null) return null;
 
-        EnderecoResponseDto.UserResponseDto userDto = null;
-        if (entity.getBairro() != null) {
-            userDto = EnderecoResponseDto.UserResponseDto
-                    .builder()
-                    .nome(entity.getFkUser().getNome())
-                    .telefone(entity.getFkUser().getTelefone())
-                    .cpfCnpj(entity.getFkUser().getCpfCnpj())
-                    .build();
-        }
 
         return EnderecoResponseDto
                 .builder()
@@ -51,7 +42,7 @@ public class EnderecoMapper {
                 .logradouro(entity.getLogradouro())
                 .siafi(entity.getSiafi())
                 .uf(entity.getUf())
-                .fkUser(userDto)
+                .numero(entity.getNumero())
                 .build();
 
     }
