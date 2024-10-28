@@ -2,8 +2,7 @@ package com.example.CRUD.entity;
 
 import com.example.CRUD.Pedido;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDate;
 
@@ -11,11 +10,15 @@ import java.time.LocalDate;
 @Table(name="maoDeobra")
 @Getter
 @Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class MaoDeObrEntity implements Pedido {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+    private Integer cod;
     private String nome;
     private String descricao;
     private String categoria;
@@ -25,48 +28,14 @@ public class MaoDeObrEntity implements Pedido {
     private LocalDate horaEstimada;
     private LocalDate dataInicio;
     private String status;
-    private Integer fkCliente;
+    private Integer fkUser;
 
-//    private Integer id;
-//    private String nome;
-//    private String descricao;
-//    private String categoria;
-//    private Integer qtdEstoque;
-//    private Double precoUnitario;
-//    private String fornecedor;
-//    private String localizacao;
-//    private LocalDate dataAtualizcao;
+    @ManyToOne
+    @JoinColumn(name = "fkVeiculo", referencedColumnName = "id")
+    private VeiculoEntity fkVeiculo;
 
     @Override
     public Double calcularPedido() {
         return precoMaoDeObra + custoProduto;
     }
 }
-
-//package com.example.CRUD.entity;
-//
-//import jakarta.persistence.*;
-//        import lombok.Getter;
-//import lombok.Setter;
-//
-//import java.time.LocalDate;
-//
-//@Entity
-//@Table(name = "maoDeobra")
-//@Getter
-//@Setter
-//public class MaoDeObraEntity {
-//
-//    @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    private Integer id;
-//    private String nome;
-//    private String descricao;
-//    private String categoria;
-//    private Integer qtdEstoque;
-//    private Double precoUnitario;
-//    private String fornecedor;
-//    private String localizacao;
-//    private LocalDate dataAtualizcao;
-//}
-

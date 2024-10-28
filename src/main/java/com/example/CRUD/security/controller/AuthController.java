@@ -8,6 +8,7 @@ import com.example.CRUD.dto.user.RegisterRequestDTO;
 import com.example.CRUD.entity.UserEntity;
 import com.example.CRUD.security.securityToken.TokenService;
 import com.example.CRUD.service.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +28,7 @@ public class AuthController {
     private final TokenService tokenService;
 
     @PostMapping("/login")
-    public ResponseEntity<LoginRequestDTO> login(@RequestBody LoginRequestDTO body) {
+    public ResponseEntity<LoginRequestDTO> login(@RequestBody @Valid LoginRequestDTO body) {
         LoginRequestDTO user = userService.login(body);
         return ResponseEntity.ok(user);
     }
@@ -35,7 +36,7 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity register
             (
-            @RequestBody RegisterRequestDTO body
+            @RequestBody @Valid RegisterRequestDTO body
     )
     {
 
@@ -43,7 +44,7 @@ public class AuthController {
 
         usuarioParaSalvar.setSenha(passwordEncoder.encode(usuarioParaSalvar.getSenha()));
 
-        UserEntity usuarioSalvo = this.userService.save(usuarioParaSalvar, body.getEnderecoId());
+        UserEntity usuarioSalvo = this.userService.save(usuarioParaSalvar);
 
         String token = this.tokenService.generateToken(usuarioSalvo);
 

@@ -5,5 +5,5 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(HttpStatus.NOT_FOUND)
 public class NaoEncontradoException extends RuntimeException{
-    public NaoEncontradoException(String message){super(message);}
+    public NaoEncontradoException(HttpStatus notFound, String message){super(message);}
 }

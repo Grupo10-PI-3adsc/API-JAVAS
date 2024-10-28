@@ -2,8 +2,7 @@ package com.example.CRUD.entity;
 
 import com.example.CRUD.Pedido;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDate;
 
@@ -11,22 +10,31 @@ import java.time.LocalDate;
 @Table(name = "produtos")
 @Getter
 @Setter
-public class ProdutoEntity implements Pedido {
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+public class ProdutoEntity implements Pedido{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_produto")
     private Integer id;
     private String nome;
     private String descricao;
     private String categoria;
-    private Integer qtdPedido;
-    private Double precoUnitario;
+    @Column(name = "qtd_estoque")
+    private Integer qtdEstoque;
+    private Double preco;
     private String fornecedor;
+    private String localizacao;
+    @Column(name = "data_atualizacao")
     private LocalDate dataAtualizcao;
-    private Long qtdProdutoEstoque;
+    @Column(name = "cod_barra")
+    private String codBarra;
 
     @Override
     public Double calcularPedido() {
-        return qtdPedido * precoUnitario;
+        return qtdEstoque * preco;
     }
+
 }
