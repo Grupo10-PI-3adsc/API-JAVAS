@@ -61,9 +61,9 @@ public class UserEntity implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         if(this.role == permissionSets.SYS_ADM)
             return List.of(
-                    new SimpleGrantedAuthority("gerente"),
-                    new SimpleGrantedAuthority("func"),
-                    new SimpleGrantedAuthority("user"));
+                    new SimpleGrantedAuthority("ROLE_SYS_ADM"),
+                    new SimpleGrantedAuthority("ROLE_GERENTE"),
+                    new SimpleGrantedAuthority("ROLE_USER"));
 
         else return List.of(new SimpleGrantedAuthority("user"));
     }
