@@ -70,41 +70,63 @@ public class UserController {
 
     }
 
-    @GetMapping("/ordernar")
-    public ResponseEntity<List<UserDTOResponse>> ordernar (
-            @RequestBody List<RegisterRequestDTO> users
-    ) {
-
-        List<UserEntity> userE = users.stream().map(UserMapper :: toEntity).toList();
-
-        UserEntity[] userEntities = new UserEntity[users.size()];
-
-        for (int i = 0; i < users.size(); i++) {
-            userEntities[i] = userE.get(i);
-        }
-
-        userEntities = userService.ordernar(userEntities);
-
-        List<UserEntity> users2 = new ArrayList<>(Arrays.asList(userEntities));
-
-        return users2.isEmpty() ?
-            ResponseEntity.noContent().build() :
-            ResponseEntity.ok(users2
-                    .stream().map(UserMapper::toDTO).toList());
-    }
+//    @GetMapping("/ordernar")
+//    public ResponseEntity<List<UserDTOResponse>> ordernar (
+//            @RequestBody List<RegisterRequestDTO> users
+//    ) {
+//
+//        List<UserEntity> userE = users.stream().map(UserMapper :: toEntity).toList();
+//
+//        UserEntity[] userEntities = new UserEntity[users.size()];
+//
+//        for (int i = 0; i < users.size(); i++) {
+//            userEntities[i] = userE.get(i);
+//        }
+//
+//        userEntities = userService.ordernar(userEntities);
+//
+//        List<UserEntity> users2 = new ArrayList<>(Arrays.asList(userEntities));
+//
+//        return users2.isEmpty() ?
+//            ResponseEntity.noContent().build() :
+//            ResponseEntity.ok(users2
+//                    .stream().map(UserMapper::toDTO).toList());
+//    }
 
     @GetMapping("/pesquisar")
-    public ResponseEntity<List<UserDTOResponse>> pesquisar(
+    public ResponseEntity<UserDTOResponse> pesquisar(
             @RequestParam String nome
     ){
 
-        List<UserEntity> usuarios = userService.userPorNome(nome);
+        UserEntity usuario = userService.pesquisaBinaria(nome);
 
-        return usuarios.isEmpty() ?
+        return usuario.isEmpty() ?
                 ResponseEntity.noContent().build() :
-                ResponseEntity.ok(usuarios
-                        .stream().map(UserMapper::toDTO).toList());
+                ResponseEntity.ok(UserMapper.toDTO(usuario));
 
+    }
+
+    @GetMapping("/exportar")
+    public ResponseEntity<Void> exportar(
+            @RequestParam String nome
+    ){
+
+        List<UserEntity> usuario = userService.listarCliente();
+
+        userService.exportar(nome, usuario);
+
+        return usuario.isEmpty() ?
+                ResponseEntity.noContent().build() :
+                ResponseEntity.ok().build();
+
+    }
+
+    @PostMapping("/importar")
+    public ResponseEntity<List<UserDTOResponse>> importar(
+                @RequestParam String nomeArquivo
+    ){
+        List<UserEntity> users = userService.importar(nomeArquivo);
+        return ResponseEntity.created(null).body(users.stream().map(UserMapper :: toDTO).toList());
     }
 
 

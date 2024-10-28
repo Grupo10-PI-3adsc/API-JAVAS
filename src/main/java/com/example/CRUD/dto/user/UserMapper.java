@@ -85,4 +85,17 @@ public class UserMapper {
                 .role(user.getRole())
                 .build();
     }
+    public static UserEntity toEntity(RegisterRequestDTOCsv user) {
+        if (user == null) return null;
+
+        return UserEntity
+                .builder()
+                .nome(user.getNome())
+                .email(user.getEmail())
+                .cpfCnpj(user.getCpfCnpj())
+                .telefone(user.getTelefone())
+                .senha(user.getPassword())
+                .role(user.getRole())
+                .build();
+    }
 }

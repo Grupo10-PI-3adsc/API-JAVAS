@@ -21,7 +21,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class EnderecoController {
 
-    private final EnderecoRepository enderecoRepository;
+    @Autowired
+    private EnderecoRepository enderecoRepository;
 
     @Autowired
     private EnderecoService enderecoService;

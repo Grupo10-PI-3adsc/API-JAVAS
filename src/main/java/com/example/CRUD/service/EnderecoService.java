@@ -20,8 +20,10 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class EnderecoService {
 
-    private final EnderecoRepository enderecoRepository;
-    private final UserRepository userRepository;
+    @Autowired
+    private EnderecoRepository enderecoRepository;
+    @Autowired
+    private UserRepository userRepository;
 
     public EnderecoEntity save(EnderecoEntity novoEndereco, Integer idUser) {
         Optional<EnderecoEntity> enderecoOpt = enderecoRepository.findByCep(novoEndereco.getCep());
