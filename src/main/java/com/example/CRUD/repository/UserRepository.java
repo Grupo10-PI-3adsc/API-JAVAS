@@ -14,4 +14,9 @@ public interface UserRepository extends JpaRepository<UserEntity, Integer> {
     Optional<UserEntity> findByEmailAndIsActive(String email, Boolean ativo);
 
     List<UserEntity> findAllByIsActive(Boolean ativo);
+
+    List<UserEntity> findByNomeContainingIgnoreCase(String nome);
+
+    Optional<UserEntity> findByEmail(String email);
+
 }
