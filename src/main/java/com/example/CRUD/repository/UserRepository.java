@@ -16,7 +16,6 @@ public interface UserRepository extends JpaRepository<UserEntity, Integer> {
     List<UserEntity> findAllByIsActive(Boolean ativo);
 
 
-
     List<UserEntity> findByNomeContainingIgnoreCase(String nome);
 
     Optional<UserEntity> findByEmail(String email);
