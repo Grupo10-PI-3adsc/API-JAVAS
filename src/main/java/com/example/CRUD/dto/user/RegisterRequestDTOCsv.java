@@ -13,15 +13,13 @@ public class RegisterRequestDTOCsv {
     private String cpfCnpj;
     private permissionSets role;
     private String telefone;
-    private Integer enderecoId;
 
-    public RegisterRequestDTOCsv(String nome, String email, String password, String cpfCnpj, permissionSets role, String telefone, Integer enderecoId) {
+    public RegisterRequestDTOCsv(String nome, String email, String password, String cpfCnpj, permissionSets role, String telefone) {
         this.nome = nome;
         this.email = email;
         this.password = password;
         this.cpfCnpj = cpfCnpj;
         this.role = role;
         this.telefone = telefone;
-        this.enderecoId = enderecoId;
     }
 }

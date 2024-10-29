@@ -74,7 +74,7 @@ public class UserController {
         EnderecoEntity endereco = userEntity.getEnderecoId() != null && userEntity.getEnderecoId() > 0
                 ? enderecoService.buscarPorId(userEntity.getEnderecoId()) : null;
         UserEntity user = userService.atualizar(UserMapper.toEntity(userEntity), id, endereco);
-        return ResponseEntity.status(200).body(UserMapper.toDTO(user));
+        return ResponseEntity.status(200).body(UserMapper.toDTOEnd(user));
     }
 
     @Operation(description = "Inativa um usuário (cliente) pelo ID")
@@ -96,7 +96,7 @@ public class UserController {
         return usuarios.isEmpty() ?
                 ResponseEntity.noContent().build() :
                 ResponseEntity.ok(usuarios
-                        .stream().map(UserMapper::toDTO).toList());
+                        .stream().map(UserMapper::toDTOEnd).toList());
 
     }
 
@@ -124,18 +124,19 @@ public class UserController {
 //    }
 
     @GetMapping("/pesquisar")
-    public ResponseEntity<UserDTOResponse> pesquisar(
-            @RequestParam String nome
+    public ResponseEntity<UserDTO> pesquisar(
+            @RequestParam String email
     ){
 
-        UserEntity usuario = userService.pesquisaBinaria(nome);
+        int usuarioInd = userService.pesquisaBinaria(email);
 
-        return usuario.isEmpty() ?
-                ResponseEntity.noContent().build() :
-                ResponseEntity.ok(UserMapper.toDTO(usuario));
+        UserEntity usuario = userService.userPorId(usuarioInd);
+
+        return ResponseEntity.ok(UserMapper.toDTO(usuario));
 
     }
 
+    //TODO: Usuarios não podem acessar esse end point e nem o abaixo
     @GetMapping("/exportar")
     public ResponseEntity<Void> exportar(
             @RequestParam String nome
@@ -152,7 +153,7 @@ public class UserController {
     }
 
     @PostMapping("/importar")
-    public ResponseEntity<List<UserDTOResponse>> importar(
+    public ResponseEntity<List<UserDTO>> importar(
                 @RequestParam String nomeArquivo
     ){
         List<UserEntity> users = userService.importar(nomeArquivo);

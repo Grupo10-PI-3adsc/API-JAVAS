@@ -9,7 +9,9 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<UserEntity, Integer> {
 
     // Buscar por nome
-    List<UserEntity> findByNomeContainingIgnoreCase(String nome);
+    List<UserEntity> findByNomeContainingIgnoreCaseAndIsActive(String nome, Boolean ativo);
 
-    Optional<UserEntity> findByEmail(String email);
+    Optional<UserEntity> findByEmailAndIsActive(String email, Boolean ativo);
+
+    List<UserEntity> findAllByIsActive(Boolean ativo);
 }

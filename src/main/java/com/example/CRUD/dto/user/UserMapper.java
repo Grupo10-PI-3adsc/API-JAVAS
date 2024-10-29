@@ -22,7 +22,7 @@ public class UserMapper {
     }
 
 
-    public static UserDTOResponse toDTO(UserEntity user) {
+    public static UserDTOResponse toDTOEnd(UserEntity user) {
         if (user == null) return null;
 
         EnderecoEntity endereco = user.getFkEndereco();
@@ -50,6 +50,25 @@ public class UserMapper {
                                 .logradouro(endereco.getLogradouro())
                                 .build()
                 )
+                .build();
+
+    }
+
+
+    public static UserDTO toDTO(UserEntity user) {
+        if (user == null) return null;
+
+        EnderecoEntity endereco = user.getFkEndereco();
+
+        return UserDTO
+                .builder()
+                .id(user.getId())
+                .nome(user.getNome())
+                .email(user.getEmail())
+                .cpfCnpj(user.getCpfCnpj())
+                .telefone(user.getTelefone())
+                .senha(user.getPassword())
+                .role(user.getRole())
                 .build();
 
     }

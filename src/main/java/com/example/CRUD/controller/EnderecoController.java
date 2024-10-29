@@ -34,7 +34,7 @@ public class EnderecoController {
             @ApiResponse(responseCode = "400", description = "Dados inválidos"),
             @ApiResponse(responseCode = "404", description = "CEP não encontrado")
     })
-    @PostMapping("/{id}")
+    @PostMapping()
     public ResponseEntity<EnderecoResponseDto> cadastrarEndereco(
             @RequestParam String cep,
             @RequestParam Integer numero

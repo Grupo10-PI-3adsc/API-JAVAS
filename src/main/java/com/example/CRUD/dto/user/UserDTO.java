@@ -16,6 +16,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class UserDTO {
 
+    private Integer id;
     private String nome;
     private String cpfCnpj;
     private String telefone;

@@ -8,8 +8,8 @@ public enum permissionSets {
 
     private String role;
 
-    permissionSets(String nicelAcesso) {
-        this.role = nicelAcesso;
+    permissionSets(String nivelAcesso) {
+        this.role = nivelAcesso;
     }
 
     public String getRole() {

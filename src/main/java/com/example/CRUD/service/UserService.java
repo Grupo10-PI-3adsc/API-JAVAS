@@ -1,16 +1,14 @@
 package com.example.CRUD.service;
 import com.example.CRUD.dto.user.LoginRequestDTO;
-import com.example.CRUD.dto.user.RegisterRequestDTO;
 import com.example.CRUD.dto.user.RegisterRequestDTOCsv;
 import com.example.CRUD.dto.user.UserMapper;
 import com.example.CRUD.entity.UserEntity;
 import com.example.CRUD.entity.EnderecoEntity;
+import com.example.CRUD.exception.JaCadastradoException;
 import com.example.CRUD.permissionSets;
-import com.example.CRUD.repository.EnderecoRepository;
 import com.example.CRUD.repository.UserRepository;
 //import io.jsonwebtoken.security.Keys;
 import com.example.CRUD.security.securityToken.TokenService;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -29,17 +27,17 @@ import java.util.Scanner;
 @RequiredArgsConstructor
 public class UserService {
 
-
+    @Autowired
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final TokenService tokenService;
 
     public UserEntity save(UserEntity user) {
 
-        Optional<UserEntity> userEntityOptional =  userRepository.findByEmail(user.getEmail());
+        Optional<UserEntity> userEntityOptional =  userRepository.findByEmailAndIsActive(user.getEmail(), true);
 
         if (userEntityOptional.isPresent()){
-            throw (new ResponseStatusException(HttpStatus.CONFLICT, "Cliente já cadastrado!"));
+            throw (new JaCadastradoException("Usuario Já cadastrado"));
         }
 
         if(user.getRole() == null) {
@@ -53,7 +51,7 @@ public class UserService {
     }
 
     public List<UserEntity> listarCliente() {
-        return userRepository.findAll();
+        return userRepository.findAllByIsActive(true);
     }
 
     public UserEntity userPorId(int id) {
@@ -69,7 +67,7 @@ public class UserService {
     public List<UserEntity> userPorNome(String nome) {
 
 
-        return userRepository.findByNomeContainingIgnoreCase(nome);
+        return userRepository.findByNomeContainingIgnoreCaseAndIsActive(nome, true);
     }
 //
 //    public List<UserEntity> userPorNome(String nome, List<RegisterRequestDTO> users) {
@@ -101,8 +99,8 @@ public class UserService {
 
 
     public LoginRequestDTO login(LoginRequestDTO body) {
-        UserEntity user = this.userRepository.findByEmail(
-                body.getEmail()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário ou usuario invalido"));
+        UserEntity user = this.userRepository.findByEmailAndIsActive(
+                body.getEmail(), true).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário ou usuario invalido"));
 
         if(passwordEncoder.matches(body.getPassword(), user.getSenha())) {
             String token = this.tokenService.generateToken(user);
@@ -114,7 +112,7 @@ public class UserService {
     }
 
     public List<UserEntity> ordernar() {
-        List<UserEntity> users = userRepository.findAll();
+        List<UserEntity> users = userRepository.findAllByIsActive(true);
 
         UserEntity[] userEntities = new UserEntity[users.size()];
 
@@ -133,7 +131,7 @@ public class UserService {
         return users2;
     }
     public UserEntity[] ordernar(UserEntity[] users) {
-        return particiona(users, 0, users.length);
+        return particiona(users, 0, users.length -1);
     }
 
     public UserEntity[] particiona(UserEntity[] v, int indInicio, int indFim){
@@ -172,35 +170,73 @@ public class UserService {
 
     }
 
+    public int pesquisaBinaria(String x) {
+        List<UserEntity> lista = userRepository.findAllByIsActive(true);
+        UserEntity[] vetor = lista.toArray(new UserEntity[0]);
 
-    public UserEntity pesquisaBinaria(String x){
-        List<UserEntity> lista = userRepository.findAll();
-        UserEntity[] vetor = new UserEntity[lista.size()];
+        // Ordena o vetor antes de realizar a pesquisa binária
+        quickSortEmail(vetor, 0, vetor.length - 1);
 
-        for (int i = 0; i < vetor.length; i++) {
-            vetor[i] = lista.get(i);
+        // Exibir os e-mails para verificar a ordenação
+        System.out.println("Array ordenado:");
+        for (UserEntity user : vetor) {
+            System.out.println(user.getEmail());
         }
-        vetor = ordernar(vetor);
 
         int indInf = 0;
         int indSup = vetor.length - 1;
 
-        while (indInf <= indSup){
-            int meio = (indInf + indSup)/2;
-            if (vetor[meio] == null){
-                continue;
+        while (indInf <= indSup) {
+            int meio = (indInf + indSup) / 2;
+
+            if (vetor[meio] == null) {
+                break;
             }
 
-            if (vetor[meio].getNome().equals(x)){
-                return vetor[meio];
-            } else if(x.compareTo(vetor[meio].getNome()) < 0 ){
+            if (vetor[meio].getEmail().equals(x)) {
+                return meio; // Retorna o índice correto encontrado
+            } else if (x.compareTo(vetor[meio].getEmail()) < 0) {
                 indSup = meio - 1;
-            }else {
+            } else {
                 indInf = meio + 1;
             }
         }
-        return null;
+        return -1; // Retorna -1 se não for encontrado
     }
+    public void quickSortEmail(UserEntity[] v, int indInicio, int indFim) {
+        if (indInicio < indFim) {
+            int pivoIndex = particionaEmail(v, indInicio, indFim);
+            quickSortEmail(v, indInicio, pivoIndex - 1); // Ordena a parte esquerda
+            quickSortEmail(v, pivoIndex + 1, indFim);    // Ordena a parte direita
+        }
+    }
+
+    private int particionaEmail(UserEntity[] v, int indInicio, int indFim) {
+        // Usa o último elemento como pivô para simplificar
+        String pivo = v[indFim].getEmail();
+        int i = indInicio - 1;
+
+        for (int j = indInicio; j < indFim; j++) {
+            // Move elementos menores que o pivô para a esquerda
+            if (v[j].getEmail().compareTo(pivo) <= 0) {  // Inclusão de igualdade para estabilidade
+                i++;
+                UserEntity aux = v[i];
+                v[i] = v[j];
+                v[j] = aux;
+            }
+        }
+
+        // Coloca o pivô na posição correta
+        UserEntity aux = v[i + 1];
+        v[i + 1] = v[indFim];
+        v[indFim] = aux;
+
+        return i + 1;  // Retorna a posição do pivô
+    }
+
+
+
+
 
 
     public void exportar(String nomeArquivo, List<UserEntity> userList) {
@@ -266,9 +302,10 @@ public class UserService {
                 String email = leitor.next();
                 String senha = leitor.next();
                 String cpfCnpj = leitor.next();
+                String perm = leitor.next();
                 String telefone = leitor.next();
-                permissionSets role = permissionSets.valueOf(leitor.next());
-                Integer fkEndereco = leitor.nextInt();
+
+                permissionSets role = permissionSets.valueOf(perm);
 
                 userEntities.add(
                         this.save(
@@ -279,8 +316,8 @@ public class UserService {
                                                 senha,
                                                 cpfCnpj,
                                                 role,
-                                                telefone,
-                                                fkEndereco)))
+                                                telefone
+                                                )))
                 );
             }
 
