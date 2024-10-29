@@ -34,7 +34,7 @@ public class UserService {
 
     public UserEntity save(UserEntity user) {
 
-        Optional<UserEntity> userEntityOptional =  userRepository.findByEmailAndIsActive(user.getEmail(), true);
+        Optional<UserEntity> userEntityOptional =  userRepository.findByEmail(user.getEmail());
 
         if (userEntityOptional.isPresent()){
             throw (new JaCadastradoException("Usuario Já cadastrado"));
@@ -51,7 +51,7 @@ public class UserService {
     }
 
     public List<UserEntity> listarCliente() {
-        return userRepository.findAllByIsActive(true);
+        return userRepository.findAll();
     }
 
     public UserEntity userPorId(int id) {
@@ -67,7 +67,7 @@ public class UserService {
     public List<UserEntity> userPorNome(String nome) {
 
 
-        return userRepository.findByNomeContainingIgnoreCaseAndIsActive(nome, true);
+        return userRepository.findByNomeContainingIgnoreCase(nome);
     }
 //
 //    public List<UserEntity> userPorNome(String nome, List<RegisterRequestDTO> users) {
@@ -99,8 +99,8 @@ public class UserService {
 
 
     public LoginRequestDTO login(LoginRequestDTO body) {
-        UserEntity user = this.userRepository.findByEmailAndIsActive(
-                body.getEmail(), true).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário ou usuario invalido"));
+        UserEntity user = this.userRepository.findByEmail(
+                body.getEmail()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário ou usuario invalido"));
 
         if(passwordEncoder.matches(body.getPassword(), user.getSenha())) {
             String token = this.tokenService.generateToken(user);
@@ -112,7 +112,7 @@ public class UserService {
     }
 
     public List<UserEntity> ordernar() {
-        List<UserEntity> users = userRepository.findAllByIsActive(true);
+        List<UserEntity> users = userRepository.findAll();
 
         UserEntity[] userEntities = new UserEntity[users.size()];
 
@@ -171,7 +171,7 @@ public class UserService {
     }
 
     public int pesquisaBinaria(String x) {
-        List<UserEntity> lista = userRepository.findAllByIsActive(true);
+        List<UserEntity> lista = userRepository.findAll();
         UserEntity[] vetor = lista.toArray(new UserEntity[0]);
 
         // Ordena o vetor antes de realizar a pesquisa binária

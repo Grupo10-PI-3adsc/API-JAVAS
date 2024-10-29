@@ -1,2 +1,26 @@
-nome;Email;senha;Cpf/Cnpj;Permissão;Telefone
-teste Gerente;testegerente9.ex@example.com;SenhaSegura123;2131421;USER;31 98765-4321
+id;nome;Cpf/Cnpj;Data Cadastro;Email;Permissão;Ativo;Telefone
+1;teste Gerente;2131421;null;victor.pereira@example.com;USER;false;(31) 98765-4321
+2;paulo;12345678901;null;pedro.hh@example.com;SYS_ADM;false;(11) 98765-4321
+3;paulo;12345678901;null;joao.hh@example.com;USER;false;(11) 98765-4321
+4;João Silva;123.456.789-00;null;joao.silva@email.com;SYS_ADM;false;(11) 98765-4321
+5;João Silva;123.456.789-00;null;joaoooo.silva@email.com;SYS_ADM;false;(11) 98765-4321
+6;João Silva;123.456.789-00;null;TESTEEEEE.silva@email.com;SYS_ADM;false;(11) 98765-4321
+7;João Silva;123.456.789-00;null;joaoSilva.silva@email.com;SYS_ADM;false;(11) 98765-4321
+8;Maria Oliveira;98765432100;null;maria.oliveira@example.com;USER;false;(21) 99876-5432
+9;Carlos Pereira;12345678909;null;carlos.pereira@example.com;USER;false;(31) 98765-4321
+10;Matteus Escravo;2131421;null;matteus.nogueira@example.com;USER;false;(31) 98765-4321
+11;Maria Souza;987.654.321-00;null;maria.souza@example.com;SYS_ADM;false;(21) 99876-5432
+12;Ana Paula;987.654.321-00;null;ana.paula@example.com;SYS_ADM;false;(11) 91234-5678
+13;Matteus Escravo;2131421;null;matteus.nogueira@example.com;USER;false;(31) 98765-4321
+14;Matteus Escravo;2131421;null;matteus.nogueira@example.com;USER;false;(31) 98765-4321
+15;Carlos Escravo;2131421;null;carlos.augusto@example.com;USER;false;(31) 98765-4321
+16;teste Gerente;2131421;null;testegerente.ex@example.com;USER;false;(31) 98765-4321
+17;teste Gerente;2131421;null;testegerente2.ex@example.com;USER;false;31 98765-4321
+18;teste Gerente;2131421;null;testegerente3.ex@example.com;USER;false;31 98765-4321
+19;teste Gerente;2131421;null;testegerente4.ex@example.com;USER;false;31 98765-4321
+20;teste Gerente;2131421;null;testegerente5.ex@example.com;USER;false;31 98765-4321
+21;teste Gerente;2131421;null;testegerente6.ex@example.com;USER;false;31 98765-4321
+22;teste Gerente;2131421;null;testegerente7.ex@example.com;USER;false;31 98765-4321
+23;teste Gerente;2131421;null;testegerente8.ex@example.com;USER;false;31 98765-4321
+24;teste Gerente;2131421;null;testegerente9.ex@example.com;USER;false;31 98765-4321
+25;Victor Gerente;2131421;null;aaaa.pereira@example.com;USER;false;(31) 98765-4321
