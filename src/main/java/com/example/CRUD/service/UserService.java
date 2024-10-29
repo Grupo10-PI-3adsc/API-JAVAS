@@ -51,7 +51,8 @@ public class UserService {
     }
 
     public List<UserEntity> listarCliente() {
-        return userRepository.findAllBy();
+
+        return userRepository.findAll();
     }
 
     public UserEntity userPorId(int id) {
