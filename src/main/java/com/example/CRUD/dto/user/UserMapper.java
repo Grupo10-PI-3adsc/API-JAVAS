@@ -21,6 +21,19 @@ public class UserMapper {
 
     }
 
+    public static LoginResponseDTO toDTOLogin(UserEntity user, String token) {
+        if (user == null) return null;
+
+        return LoginResponseDTO
+                .builder()
+                .email(user.getEmail())
+                .password(user.getPassword())
+                .nome(user.getNome())
+                .token(token)
+                .build();
+
+    }
+
 
     public static UserDTOResponse toDTOEnd(UserEntity user) {
         if (user == null) return null;
