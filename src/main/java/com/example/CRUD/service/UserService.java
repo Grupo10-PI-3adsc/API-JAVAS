@@ -107,7 +107,6 @@ public class UserService {
             String token = this.tokenService.generateToken(user);
             body.setToken(token);
             return body;
-
         }
         throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário ou usuario invalido");
     }
