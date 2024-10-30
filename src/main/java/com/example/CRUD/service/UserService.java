@@ -174,10 +174,8 @@ public class UserService {
         List<UserEntity> lista = userRepository.findAll();
         UserEntity[] vetor = lista.toArray(new UserEntity[0]);
 
-        // Ordena o vetor antes de realizar a pesquisa binária
         quickSortEmail(vetor, 0, vetor.length - 1);
 
-        // Exibir os e-mails para verificar a ordenação
         System.out.println("Array ordenado:");
         for (UserEntity user : vetor) {
             System.out.println(user.getEmail());
@@ -194,31 +192,29 @@ public class UserService {
             }
 
             if (vetor[meio].getEmail().equals(x)) {
-                return meio; // Retorna o índice correto encontrado
+                return meio;
             } else if (x.compareTo(vetor[meio].getEmail()) < 0) {
                 indSup = meio - 1;
             } else {
                 indInf = meio + 1;
             }
         }
-        return -1; // Retorna -1 se não for encontrado
+        return -1;
     }
     public void quickSortEmail(UserEntity[] v, int indInicio, int indFim) {
         if (indInicio < indFim) {
             int pivoIndex = particionaEmail(v, indInicio, indFim);
-            quickSortEmail(v, indInicio, pivoIndex - 1); // Ordena a parte esquerda
-            quickSortEmail(v, pivoIndex + 1, indFim);    // Ordena a parte direita
+            quickSortEmail(v, indInicio, pivoIndex - 1);
+            quickSortEmail(v, pivoIndex + 1, indFim);
         }
     }
 
     private int particionaEmail(UserEntity[] v, int indInicio, int indFim) {
-        // Usa o último elemento como pivô para simplificar
         String pivo = v[indFim].getEmail();
         int i = indInicio - 1;
 
         for (int j = indInicio; j < indFim; j++) {
-            // Move elementos menores que o pivô para a esquerda
-            if (v[j].getEmail().compareTo(pivo) <= 0) {  // Inclusão de igualdade para estabilidade
+            if (v[j].getEmail().compareTo(pivo) <= 0) {
                 i++;
                 UserEntity aux = v[i];
                 v[i] = v[j];
@@ -226,12 +222,11 @@ public class UserService {
             }
         }
 
-        // Coloca o pivô na posição correta
         UserEntity aux = v[i + 1];
         v[i + 1] = v[indFim];
         v[indFim] = aux;
 
-        return i + 1;  // Retorna a posição do pivô
+        return i + 1;
     }
 
 
@@ -242,26 +237,20 @@ public class UserService {
     public void exportar(String nomeArquivo, List<UserEntity> userList) {
 
         UserEntity[] musicas = new UserEntity[userList.size()];
-
         for (int i = 0; i < musicas.length; i++) {
             musicas[i] = userList.get(i);
         }
-
         try (
                 OutputStream outputStream = new FileOutputStream("%s.csv".formatted(nomeArquivo));
                 BufferedWriter escritor = new BufferedWriter(new OutputStreamWriter(outputStream, StandardCharsets.UTF_8))
 
         ) {
-
             escritor.write("%s;%s;%s;%s;%s;%s;%s;%s\n".formatted(
                     "id", "nome", "Cpf/Cnpj", "Data Cadastro", "Email", "Permissão", "Ativo", "Telefone"));
-
             for (UserEntity musica : musicas){
-
                 if (musica == null){
                     continue;
                 }
-
                 escritor.write("%d;%s;%s;%s;%s;%s;%b;%s\n"
                         .formatted(
                                 musica.getId(),
@@ -273,28 +262,19 @@ public class UserService {
                                 musica.getIsActive(),
                                 musica.getTelefone()));
             }
-
-
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
-
     }
 
     public List<UserEntity> importar(String nomeArquivoI) {
-
-
         try {
             InputStream inputStream = new FileInputStream("%s.csv".formatted(nomeArquivoI));
-
             BufferedReader bufferedReader = new BufferedReader(
                     new InputStreamReader(inputStream)
             );
-
             Scanner leitor = new Scanner(bufferedReader);
-
             List<UserEntity> userEntities = new ArrayList<>();
-
             leitor.useDelimiter("[;\\n]");
             leitor.nextLine();
             while (leitor.hasNextLine()){
@@ -304,9 +284,7 @@ public class UserService {
                 String cpfCnpj = leitor.next();
                 String perm = leitor.next();
                 String telefone = leitor.next();
-
                 permissionSets role = permissionSets.valueOf(perm);
-
                 userEntities.add(
                         this.save(
                                 UserMapper.toEntity(
@@ -320,10 +298,8 @@ public class UserService {
                                                 )))
                 );
             }
-
             leitor.close();
             return userEntities;
-
         } catch (FileNotFoundException e) {
             System.out.println("Arquivo não encontrado!");
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
