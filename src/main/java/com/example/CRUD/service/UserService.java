@@ -1,5 +1,6 @@
 package com.example.CRUD.service;
 import com.example.CRUD.dto.user.LoginRequestDTO;
+import com.example.CRUD.dto.user.LoginResponseDTO;
 import com.example.CRUD.dto.user.RegisterRequestDTOCsv;
 import com.example.CRUD.dto.user.UserMapper;
 import com.example.CRUD.entity.UserEntity;
@@ -99,14 +100,13 @@ public class UserService {
     }
 
 
-    public LoginRequestDTO login(LoginRequestDTO body) {
+    public LoginResponseDTO login(LoginRequestDTO body) {
         UserEntity user = this.userRepository.findByEmail(
                 body.getEmail()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário ou usuario invalido"));
 
         if(passwordEncoder.matches(body.getPassword(), user.getSenha())) {
             String token = this.tokenService.generateToken(user);
-            body.setToken(token);
-            return body;
+            return UserMapper.toDTOLogin(user,token);
         }
         throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário ou usuario invalido");
     }
