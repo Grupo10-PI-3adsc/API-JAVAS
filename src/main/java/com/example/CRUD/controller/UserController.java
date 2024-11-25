@@ -83,7 +83,7 @@ public class UserController {
     })
     @PutMapping("/inativar/{id}")
     public ResponseEntity<Void> deletarCliente(@PathVariable Integer id) {
-        UserEntity user = userService.inativarCliente(id);
+        userService.inativarCliente(id);
         return ResponseEntity.status(204).build();
     }
 

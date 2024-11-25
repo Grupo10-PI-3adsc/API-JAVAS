@@ -178,23 +178,14 @@ public class UserService {
 
         quickSortEmail(vetor, 0, vetor.length - 1);
 
-        System.out.println("Array ordenado:");
-        for (UserEntity user : vetor) {
-            System.out.println(user.getEmail());
-        }
-
         int indInf = 0;
         int indSup = vetor.length - 1;
 
         while (indInf <= indSup) {
             int meio = (indInf + indSup) / 2;
 
-            if (vetor[meio] == null) {
-                break;
-            }
-
             if (vetor[meio].getEmail().equals(x)) {
-                return meio;
+                return vetor[meio].getId();
             } else if (x.compareTo(vetor[meio].getEmail()) < 0) {
                 indSup = meio - 1;
             } else {
@@ -203,6 +194,7 @@ public class UserService {
         }
         return -1;
     }
+
     public void quickSortEmail(UserEntity[] v, int indInicio, int indFim) {
         if (indInicio < indFim) {
             int pivoIndex = particionaEmail(v, indInicio, indFim);
@@ -212,27 +204,24 @@ public class UserService {
     }
 
     private int particionaEmail(UserEntity[] v, int indInicio, int indFim) {
-        String pivo = v[indFim].getEmail();
+        String pivo = v[indFim].getEmail().toLowerCase(); // Normaliza para minúsculas
         int i = indInicio - 1;
 
         for (int j = indInicio; j < indFim; j++) {
-            if (v[j].getEmail().compareTo(pivo) <= 0) {
+            if (v[j].getEmail().toLowerCase().compareTo(pivo) <= 0) { // Normaliza para evitar case-sensitive
                 i++;
-                UserEntity aux = v[i];
-                v[i] = v[j];
-                v[j] = aux;
+                troca(v, i, j);
             }
         }
-
-        UserEntity aux = v[i + 1];
-        v[i + 1] = v[indFim];
-        v[indFim] = aux;
-
+        troca(v, i + 1, indFim);
         return i + 1;
     }
 
-
-
+    private void troca(UserEntity[] v, int i, int j) {
+        UserEntity temp = v[i];
+        v[i] = v[j];
+        v[j] = temp;
+    }
 
 
 
