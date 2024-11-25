@@ -1,24 +1,26 @@
 package com.example.CRUD.service;
-import com.example.CRUD.dto.user.LoginRequestDTO;
-import com.example.CRUD.dto.user.LoginResponseDTO;
-import com.example.CRUD.dto.user.RegisterRequestDTOCsv;
-import com.example.CRUD.dto.user.UserMapper;
+import com.example.CRUD.dto.user.*;
 import com.example.CRUD.entity.UserEntity;
 import com.example.CRUD.entity.EnderecoEntity;
 import com.example.CRUD.exception.JaCadastradoException;
+import com.example.CRUD.exception.NaoEncontradoException;
 import com.example.CRUD.permissionSets;
 import com.example.CRUD.repository.UserRepository;
 //import io.jsonwebtoken.security.Keys;
 import com.example.CRUD.security.securityToken.TokenService;
+import com.example.CRUD.service.JavaMail.JavaMail;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -108,7 +110,7 @@ public class UserService {
             String token = this.tokenService.generateToken(user);
             return UserMapper.toDTOLogin(user,token);
         }
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário ou usuario invalido");
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário ou senha invalido");
     }
 
     public List<UserEntity> ordernar() {
@@ -314,5 +316,73 @@ public class UserService {
         }
         if (enderecoEntity != null) userEntity.setFkEndereco(enderecoEntity);
         return userRepository.save(userEntity);
+    }
+
+    public void enviarCodigoRecuperarSenha(String email) {
+        Optional<UserEntity> usuarioEmail = userRepository.findByEmail(email);
+
+        if (usuarioEmail.isEmpty()){
+            throw new NaoEncontradoException(HttpStatus.NOT_FOUND, "Email não cadastrado");
+        }
+
+        UserEntity usuario = usuarioEmail.get();
+
+        JavaMail.sendEmail(email, usuario.getNome());
+        System.out.println("Esse é o codigo pro email" + JavaMail.getCode());
+        usuario.setCodigo_recuperar_senha(JavaMail.getCode());
+
+        LocalDateTime validade = LocalDateTime.now().plusMinutes(10).truncatedTo(ChronoUnit.SECONDS);
+        usuario.setValidade_codigo_senha(validade);
+        System.out.println("Essa é a validade" + validade);
+
+        userRepository.save(usuario);
+    }
+
+    public void validarCodigoRecuperacaoSenha(UsuarioValidarCodigoDto validarSenhaDto) {
+        Optional<UserEntity> usuarioEmail = userRepository.findByEmail(validarSenhaDto.getEmail());
+
+        if (usuarioEmail.isEmpty()){
+            throw new NaoEncontradoException(HttpStatus.NOT_FOUND, "Email não cadastrado");
+        }
+
+        UserEntity usuario = usuarioEmail.get();
+
+        if (usuario.getValidade_codigo_senha().isBefore(LocalDateTime.now())){
+            throw new NaoEncontradoException( HttpStatus.BAD_REQUEST, "A validade do codigo expirou");
+        }
+
+        if (!validarSenhaDto.getCodigo_recuperar_senha().equals(usuario.getCodigo_recuperar_senha())){
+            throw new NaoEncontradoException(HttpStatus.BAD_REQUEST, "Codigo de recuperação está invalido !");
+        }
+    }
+
+    public void mudarSenha(UsuarioMudarSenhaDto mudarSenhaDto) {
+        Optional<UserEntity> usuarioEmail = userRepository.findByEmail(mudarSenhaDto.getEmail());
+
+        if (usuarioEmail.isEmpty()){
+            throw new NaoEncontradoException(HttpStatus.NOT_FOUND, "Email não cadastrado");
+        }
+
+        UserEntity usuario = usuarioEmail.get();
+
+        if (usuario.getValidade_codigo_senha() == null){
+            throw new NaoEncontradoException( HttpStatus.NOT_FOUND, "Nenhum codigo de validação encontrado, solicite um novo");
+        }
+
+        if (usuario.getValidade_codigo_senha().isBefore(LocalDateTime.now())){
+            throw new NaoEncontradoException(HttpStatus.BAD_REQUEST, "A válidade do código expirou, solicite um novo");
+        }
+
+        if(mudarSenhaDto.getSenha() == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "senha invalido");
+        }
+
+        String hashSenha = passwordEncoder.encode(mudarSenhaDto.getSenha());
+
+        usuario.setSenha(hashSenha);
+        usuario.setCodigo_recuperar_senha(null);
+        usuario.setValidade_codigo_senha(null);
+
+        userRepository.save(usuario);
     }
 }
