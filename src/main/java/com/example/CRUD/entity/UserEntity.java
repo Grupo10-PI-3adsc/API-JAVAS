@@ -9,6 +9,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
@@ -50,6 +51,12 @@ public class UserEntity implements UserDetails {
 
     @Column(name = "Funcao")
     private permissionSets role;
+
+    @Column(name = "codigo_recuperar_senha")
+    private String codigo_recuperar_senha;
+
+    @Column(name = "validade_codigo_senha")
+    private LocalDateTime validade_codigo_senha;
 
     @ManyToOne
     @JoinColumn(name = "fk_endereco_id", referencedColumnName = "id_endereco")
