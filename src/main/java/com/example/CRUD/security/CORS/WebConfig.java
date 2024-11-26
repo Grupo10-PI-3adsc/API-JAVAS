@@ -15,6 +15,7 @@ public class WebConfig {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
         config.addAllowedOrigin("http://localhost:5173"); // Especifique o frontend
+        config.addAllowedOrigin("https://orange-pebble-0a2632b0f.5.azurestaticapps.net"); // Especifique o frontend
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
 
