@@ -1,24 +1,26 @@
 package com.example.CRUD.service;
-import com.example.CRUD.dto.user.LoginRequestDTO;
-import com.example.CRUD.dto.user.LoginResponseDTO;
-import com.example.CRUD.dto.user.RegisterRequestDTOCsv;
-import com.example.CRUD.dto.user.UserMapper;
+import com.example.CRUD.dto.user.*;
 import com.example.CRUD.entity.UserEntity;
 import com.example.CRUD.entity.EnderecoEntity;
 import com.example.CRUD.exception.JaCadastradoException;
+import com.example.CRUD.exception.NaoEncontradoException;
 import com.example.CRUD.permissionSets;
 import com.example.CRUD.repository.UserRepository;
 //import io.jsonwebtoken.security.Keys;
 import com.example.CRUD.security.securityToken.TokenService;
+import com.example.CRUD.service.JavaMail.JavaMail;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -108,7 +110,7 @@ public class UserService {
             String token = this.tokenService.generateToken(user);
             return UserMapper.toDTOLogin(user,token);
         }
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário ou usuario invalido");
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário ou senha invalido");
     }
 
     public List<UserEntity> ordernar() {
@@ -176,23 +178,14 @@ public class UserService {
 
         quickSortEmail(vetor, 0, vetor.length - 1);
 
-        System.out.println("Array ordenado:");
-        for (UserEntity user : vetor) {
-            System.out.println(user.getEmail());
-        }
-
         int indInf = 0;
         int indSup = vetor.length - 1;
 
         while (indInf <= indSup) {
             int meio = (indInf + indSup) / 2;
 
-            if (vetor[meio] == null) {
-                break;
-            }
-
             if (vetor[meio].getEmail().equals(x)) {
-                return meio;
+                return vetor[meio].getId();
             } else if (x.compareTo(vetor[meio].getEmail()) < 0) {
                 indSup = meio - 1;
             } else {
@@ -201,6 +194,7 @@ public class UserService {
         }
         return -1;
     }
+
     public void quickSortEmail(UserEntity[] v, int indInicio, int indFim) {
         if (indInicio < indFim) {
             int pivoIndex = particionaEmail(v, indInicio, indFim);
@@ -210,27 +204,24 @@ public class UserService {
     }
 
     private int particionaEmail(UserEntity[] v, int indInicio, int indFim) {
-        String pivo = v[indFim].getEmail();
+        String pivo = v[indFim].getEmail().toLowerCase(); // Normaliza para minúsculas
         int i = indInicio - 1;
 
         for (int j = indInicio; j < indFim; j++) {
-            if (v[j].getEmail().compareTo(pivo) <= 0) {
+            if (v[j].getEmail().toLowerCase().compareTo(pivo) <= 0) { // Normaliza para evitar case-sensitive
                 i++;
-                UserEntity aux = v[i];
-                v[i] = v[j];
-                v[j] = aux;
+                troca(v, i, j);
             }
         }
-
-        UserEntity aux = v[i + 1];
-        v[i + 1] = v[indFim];
-        v[indFim] = aux;
-
+        troca(v, i + 1, indFim);
         return i + 1;
     }
 
-
-
+    private void troca(UserEntity[] v, int i, int j) {
+        UserEntity temp = v[i];
+        v[i] = v[j];
+        v[j] = temp;
+    }
 
 
 
@@ -314,5 +305,73 @@ public class UserService {
         }
         if (enderecoEntity != null) userEntity.setFkEndereco(enderecoEntity);
         return userRepository.save(userEntity);
+    }
+
+    public void enviarCodigoRecuperarSenha(String email) {
+        Optional<UserEntity> usuarioEmail = userRepository.findByEmail(email);
+
+        if (usuarioEmail.isEmpty()){
+            throw new NaoEncontradoException(HttpStatus.NOT_FOUND, "Email não cadastrado");
+        }
+
+        UserEntity usuario = usuarioEmail.get();
+
+        JavaMail.sendEmail(email, usuario.getNome());
+        System.out.println("Esse é o codigo pro email" + JavaMail.getCode());
+        usuario.setCodigo_recuperar_senha(JavaMail.getCode());
+
+        LocalDateTime validade = LocalDateTime.now().plusMinutes(10).truncatedTo(ChronoUnit.SECONDS);
+        usuario.setValidade_codigo_senha(validade);
+        System.out.println("Essa é a validade" + validade);
+
+        userRepository.save(usuario);
+    }
+
+    public void validarCodigoRecuperacaoSenha(UsuarioValidarCodigoDto validarSenhaDto) {
+        Optional<UserEntity> usuarioEmail = userRepository.findByEmail(validarSenhaDto.getEmail());
+
+        if (usuarioEmail.isEmpty()){
+            throw new NaoEncontradoException(HttpStatus.NOT_FOUND, "Email não cadastrado");
+        }
+
+        UserEntity usuario = usuarioEmail.get();
+
+        if (usuario.getValidade_codigo_senha().isBefore(LocalDateTime.now())){
+            throw new NaoEncontradoException( HttpStatus.BAD_REQUEST, "A validade do codigo expirou");
+        }
+
+        if (!validarSenhaDto.getCodigo_recuperar_senha().equals(usuario.getCodigo_recuperar_senha())){
+            throw new NaoEncontradoException(HttpStatus.BAD_REQUEST, "Codigo de recuperação está invalido !");
+        }
+    }
+
+    public void mudarSenha(UsuarioMudarSenhaDto mudarSenhaDto) {
+        Optional<UserEntity> usuarioEmail = userRepository.findByEmail(mudarSenhaDto.getEmail());
+
+        if (usuarioEmail.isEmpty()){
+            throw new NaoEncontradoException(HttpStatus.NOT_FOUND, "Email não cadastrado");
+        }
+
+        UserEntity usuario = usuarioEmail.get();
+
+        if (usuario.getValidade_codigo_senha() == null){
+            throw new NaoEncontradoException( HttpStatus.NOT_FOUND, "Nenhum codigo de validação encontrado, solicite um novo");
+        }
+
+        if (usuario.getValidade_codigo_senha().isBefore(LocalDateTime.now())){
+            throw new NaoEncontradoException(HttpStatus.BAD_REQUEST, "A válidade do código expirou, solicite um novo");
+        }
+
+        if(mudarSenhaDto.getSenha() == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "senha invalido");
+        }
+
+        String hashSenha = passwordEncoder.encode(mudarSenhaDto.getSenha());
+
+        usuario.setSenha(hashSenha);
+        usuario.setCodigo_recuperar_senha(null);
+        usuario.setValidade_codigo_senha(null);
+
+        userRepository.save(usuario);
     }
 }

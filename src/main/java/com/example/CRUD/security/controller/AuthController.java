@@ -56,4 +56,26 @@ public class AuthController {
         return ResponseEntity.created(null).body(userDTO);
 
     }
+
+    @PostMapping("/recuperar-senha")
+    public ResponseEntity<String> recuperar(@RequestParam String email) {
+        userService.enviarCodigoRecuperarSenha(email);
+        return ResponseEntity.ok("Email Enviado!");
+    }
+
+    @PostMapping("/recuperar-senha/validar-codigo")
+    public ResponseEntity<String> validarCodigoRecuperacaoSenha(@RequestBody UsuarioValidarCodigoDto validarCodigoDto) {
+        userService.validarCodigoRecuperacaoSenha(validarCodigoDto);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body("Código Valido");
+    }
+
+    @PatchMapping("/recuperar-senha/nova-senha")
+    public ResponseEntity<String> novaSenha(@RequestBody UsuarioMudarSenhaDto mudarSenhaDto) {
+        userService.mudarSenha(mudarSenhaDto);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body("Senha alterada com sucesso");
+    }
 }

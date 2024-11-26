@@ -33,8 +33,7 @@ public class UserController {
     private EnderecoService enderecoService;
 
     @Operation(description = "Mostra os usuários cadastrados")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Lista de usuários retornada com sucesso"),
+    @ApiResponses(value = {            @ApiResponse(responseCode = "200", description = "Lista de usuários retornada com sucesso"),
             @ApiResponse(responseCode = "204", description = "Não há usuários cadastrados")
     })
     @GetMapping
@@ -84,7 +83,7 @@ public class UserController {
     })
     @PutMapping("/inativar/{id}")
     public ResponseEntity<Void> deletarCliente(@PathVariable Integer id) {
-        UserEntity user = userService.inativarCliente(id);
+        userService.inativarCliente(id);
         return ResponseEntity.status(204).build();
     }
 
