@@ -31,6 +31,8 @@ public class ProdutoEntity implements Pedido{
     private LocalDate dataAtualizcao;
     @Column(name = "cod_barra")
     private String codBarra;
+    @Column(name = "imagem_url")
+    private String imagemUrl;
 
     @Override
     public Double calcularPedido() {
