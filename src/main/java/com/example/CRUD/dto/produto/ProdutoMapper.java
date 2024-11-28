@@ -2,6 +2,8 @@ package com.example.CRUD.dto.produto;
 
 import com.example.CRUD.entity.ProdutoEntity;
 
+import java.time.LocalDate;
+
 public class ProdutoMapper {
 
     public static ProdutoEntity toEntity(ProdutoDTO dto) {
@@ -16,7 +18,8 @@ public class ProdutoMapper {
                 .qtdEstoque(dto.getQtdEstoque())
                 .fornecedor(dto.getFornecedor())
                 .localizacao(dto.getLocalizacao())
-                .dataAtualizcao(dto.getDataAtualizcao())
+                .dataAtualizcao(LocalDate.now())
+                .imagemUrl(dto.getImagemUrl())
                 .build();
     }
 
@@ -33,6 +36,7 @@ public class ProdutoMapper {
                 .fornecedor(entity.getFornecedor())
                 .localizacao(entity.getLocalizacao())
                 .dataAtualizcao(entity.getDataAtualizcao())
+                .imagemUrl(entity.getImagemUrl())
                 .build();
     }
 }

@@ -20,4 +20,5 @@ public class ProdutoDTO {
     private String localizacao;
     private LocalDate dataAtualizcao;
     private String codBarra;
+    private String imagemUrl;
 }

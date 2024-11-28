@@ -70,8 +70,8 @@ public class ProdutoController {
             @ApiResponse(responseCode = "404", description = "Produto não encontrado")
     })
     @PutMapping("/{id}")
-    public ResponseEntity<ProdutoEntity> atualizar(@PathVariable Integer id, @RequestBody ProdutoEntity produto) {
-        return ResponseEntity.status(200).body(produtoService.atualizarProduto(produto, id));
+    public ResponseEntity<ProdutoEntity> atualizar(@PathVariable Integer id, @RequestBody ProdutoDTO produto) {
+        return ResponseEntity.status(200).body(produtoService.atualizarProduto(ProdutoMapper.toEntity(produto), id));
     }
 
     @Operation(description = "Deleta um produto pelo ID")
