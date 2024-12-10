@@ -14,4 +14,5 @@ public interface ProdutoRepository extends JpaRepository<ProdutoEntity, Integer>
 
     @Query("SELECT SUM(p.qtdEstoque) FROM ProdutoEntity p")
     Long sumQuantidade();
+
 }

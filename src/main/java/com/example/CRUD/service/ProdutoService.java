@@ -1,12 +1,13 @@
 package com.example.CRUD.service;
 
-import com.example.CRUD.Pedido;
 import com.example.CRUD.entity.ProdutoEntity;
+import com.example.CRUD.ordenacao.FilaObj;
 import com.example.CRUD.repository.ProdutoRepository;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -20,6 +21,8 @@ public class ProdutoService {
 
     @Autowired
     private ProdutoRepository produtoRepository;
+
+    private final FilaObj<List<ProdutoEntity>> filaPedidos = new FilaObj<>(100);
 
     public ProdutoEntity save(ProdutoEntity produto) {
         if(produto.getId() != null) {
@@ -64,6 +67,20 @@ public class ProdutoService {
 
     public Long quantidadeDeProdEmEstoque() {
         return produtoRepository.sumQuantidade();
+    }
+    
+    public ResponseEntity<String> adicionarPedido(List<ProdutoEntity> carrinho) {
+        if (carrinho == null || carrinho.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("O carrinho está vazio. Não é possível adicionar um pedido.");
+        }
+
+        try {
+            filaPedidos.insert(carrinho);
+            String mensagem = "Pedido adicionado à fila com sucesso! Contém " + carrinho.size() + " produtos.";
+            return ResponseEntity.ok(mensagem);
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro: Fila cheia. Tente novamente mais tarde.");
+        }
     }
 
 }
