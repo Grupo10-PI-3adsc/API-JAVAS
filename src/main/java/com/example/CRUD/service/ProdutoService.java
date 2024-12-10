@@ -65,6 +65,10 @@ public class ProdutoService {
         return produtoPorCategoria;
     }
 
+    public Long quantidadeDeProdEmEstoque() {
+        return produtoRepository.sumQuantidade();
+    }
+    
     public ResponseEntity<String> adicionarPedido(List<ProdutoEntity> carrinho) {
         if (carrinho == null || carrinho.isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("O carrinho está vazio. Não é possível adicionar um pedido.");
