@@ -4,6 +4,7 @@ import com.example.CRUD.dto.produto.ProdutoDTO;
 import com.example.CRUD.dto.produto.ProdutoMapper;
 import com.example.CRUD.dto.produto.ProdutoResponseDto;
 import com.example.CRUD.entity.ProdutoEntity;
+import com.example.CRUD.ordenacao.FilaObj;
 import com.example.CRUD.repository.ProdutoRepository;
 import com.example.CRUD.service.ProdutoService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -11,6 +12,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -94,12 +96,23 @@ public class ProdutoController {
             @ApiResponse(responseCode = "204", description = "Produto não encontrado")
     })
     @GetMapping("/pedidos/{id}")
-    public ResponseEntity<String> listarPedidos(@PathVariable Integer id) {
+    public ResponseEntity<String> pedidosPorid(@PathVariable Integer id) {
         Optional<ProdutoEntity> produtoOpt = pedidoProdutoRepository.findById(id);
         if(produtoOpt.isEmpty()) {
             return ResponseEntity.status(204).build();
         }
         return ResponseEntity.status(200).body("O total de todos os pedidos de Produto: RS" + produtoOpt.get().calcularPedido());
+    }
+
+
+    @PostMapping("/pedidos")
+    public ResponseEntity<String> criarPedido(@RequestBody List<ProdutoEntity> carrinho) {
+        try {
+            return produtoService.adicionarPedido(carrinho);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Erro inesperado ao processar o pedido: " + e.getMessage());
+        }
     }
 
 }
