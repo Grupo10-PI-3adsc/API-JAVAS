@@ -19,4 +19,23 @@ public class ProdutoResponseDto {
     private LocalDate dataAtualizcao;
     private String codBarra;
     private String imagemUrl;
+
+    public ProdutoResponseDto() {
+    }
+
+
+    public ProdutoResponseDto(String nome, String descricao, String categoria, Integer qtdEstoque, Double preco, String fornecedor, String localizacao, LocalDate dataAtualizcao, String codBarra, String imagemUrl) {
+        this.nome = nome;
+        this.descricao = descricao;
+        this.categoria = categoria;
+        this.qtdEstoque = qtdEstoque;
+        this.preco = preco;
+        this.fornecedor = fornecedor;
+        this.localizacao = localizacao;
+        this.dataAtualizcao = dataAtualizcao;
+        this.codBarra = codBarra;
+        this.imagemUrl = imagemUrl;
+    }
 }
+
+
