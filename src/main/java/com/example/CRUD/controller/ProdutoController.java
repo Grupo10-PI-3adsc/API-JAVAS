@@ -4,7 +4,6 @@ import com.example.CRUD.dto.produto.ProdutoDTO;
 import com.example.CRUD.dto.produto.ProdutoMapper;
 import com.example.CRUD.dto.produto.ProdutoResponseDto;
 import com.example.CRUD.entity.ProdutoEntity;
-import com.example.CRUD.ordenacao.FilaObj;
 import com.example.CRUD.repository.ProdutoRepository;
 import com.example.CRUD.service.ProdutoService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -114,5 +113,6 @@ public class ProdutoController {
                     .body("Erro inesperado ao processar o pedido: " + e.getMessage());
         }
     }
+
 
 }
