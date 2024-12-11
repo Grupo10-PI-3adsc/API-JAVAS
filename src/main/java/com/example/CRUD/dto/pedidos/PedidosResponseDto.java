@@ -3,6 +3,7 @@ package com.example.CRUD.dto.pedidos;
 import lombok.Builder;
 import lombok.Data;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
 
@@ -10,7 +11,7 @@ import java.util.Date;
 @Builder
 public class PedidosResponseDto {
 
-    private LocalDateTime dataPedido;
+    private LocalDate dataPedido;
     private Double total;
     private String status;
     private String observacoes;

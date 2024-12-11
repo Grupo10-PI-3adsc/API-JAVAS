@@ -3,6 +3,7 @@ package com.example.CRUD.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
 
@@ -19,7 +20,7 @@ public class PedidosEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID_Pedido")
     private Integer id_pedido;
-    private LocalDateTime dataPedido;
+    private LocalDate dataPedido;
     private Double total;
     private String status;
     private String observacoes;
@@ -27,4 +28,13 @@ public class PedidosEntity {
     @ManyToOne
     @JoinColumn(name = "fk_usuario", referencedColumnName = "Id")
     private UserEntity fkUsuario;
+
+
+
+    @PrePersist
+    public void prePersist() {
+        if (dataPedido == null) {
+            dataPedido = LocalDate.now();
+        }
+    }
 }

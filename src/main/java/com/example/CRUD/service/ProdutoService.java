@@ -15,6 +15,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -154,7 +157,7 @@ public class ProdutoService {
     }
 
     public Double obterSomaPedidosFinalizados() {
-        return pedidoRespository.somarPedidosFinalizados();
+        return pedidoRespository.somarPedidosFinalizados(LocalDate.now().withDayOfMonth(1));
     }
 
     public Integer obterTotalItensEmEstoque() {
@@ -162,6 +165,6 @@ public class ProdutoService {
     }
 
     public Integer obterQuantidadeVendasRealizadas() {
-        return pedidoRespository.contarVendasRealizadas();
+        return pedidoRespository.contarVendasRealizadas(LocalDate.now().withDayOfMonth(1));
     }
 }
