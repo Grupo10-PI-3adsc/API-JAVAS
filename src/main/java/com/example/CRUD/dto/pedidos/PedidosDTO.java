@@ -4,6 +4,7 @@ import com.example.CRUD.entity.UserEntity;
 import lombok.Builder;
 import lombok.Data;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
 
@@ -11,7 +12,7 @@ import java.util.Date;
 @Builder
 public class PedidosDTO {
 
-    private LocalDateTime dataPedido;
+    private LocalDate dataPedido;
     private Double total;
     private String status;
     private String observacoes;
