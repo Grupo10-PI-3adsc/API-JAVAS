@@ -144,5 +144,15 @@ public class ProdutoService {
         return pedidos;
     }
 
+    public ResponseEntity<PedidosEntity> finalizarPedido(Integer id) {
+        PedidosEntity pedido = pedidoRespository.findById(id).get();
+
+        if(pedido.getId_pedido() == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        pedido.setStatus("finalizado");
+        pedidoRespository.save(pedido);
+        return ResponseEntity.ok().body(pedido);
+    }
 
 }
