@@ -44,7 +44,7 @@ public class UserEntity implements UserDetails {
     private String senha;
 
     @Column(name = "Ativo")
-    private Boolean isActive = true;
+    private Boolean isActive;
 
     @Column(name = "Data_Cadastro")
     private LocalDate dataCadastro;
@@ -61,6 +61,12 @@ public class UserEntity implements UserDetails {
     @ManyToOne
     @JoinColumn(name = "fk_endereco_id", referencedColumnName = "id_endereco")
     private EnderecoEntity fkEndereco;
+
+    @PrePersist
+    public void prePersist() {
+        isActive = true;
+        dataCadastro = LocalDate.now();
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
