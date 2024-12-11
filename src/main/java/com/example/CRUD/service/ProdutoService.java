@@ -1,6 +1,5 @@
 package com.example.CRUD.service;
 
-import com.example.CRUD.Pedido;
 import com.example.CRUD.entity.ItensEntity;
 import com.example.CRUD.entity.PedidosEntity;
 import com.example.CRUD.entity.ProdutoEntity;
@@ -16,7 +15,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -155,4 +153,15 @@ public class ProdutoService {
         return ResponseEntity.ok().body(pedido);
     }
 
+    public Double obterSomaPedidosFinalizados() {
+        return pedidoRespository.somarPedidosFinalizados();
+    }
+
+    public Integer obterTotalItensEmEstoque() {
+        return produtoRepository.totalItensEmEstoque();
+    }
+
+    public Integer obterQuantidadeVendasRealizadas() {
+        return pedidoRespository.contarVendasRealizadas();
+    }
 }

@@ -31,8 +31,7 @@ public class ProdutoController {
     private ProdutoRepository pedidoProdutoRepository;
     @Autowired
     private ProdutoService produtoService;
-    @Autowired
-    private PedidoRespository pedidoRespository;
+
 
     @Operation(description = "Lista todos os produtos cadastrados")
     @ApiResponses(value = {
@@ -144,5 +143,53 @@ public class ProdutoController {
         return Optional.ofNullable(produtoService.finalizarPedido(id))
                 .map(pedido -> ResponseEntity.ok(pedido))
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build()).getBody();
+    }
+
+    @GetMapping("/pedidos/soma-finalizados")
+    @Operation(summary = "Somar total de vendas no mes", description = "Este endpoint retorna o total vendido no mês")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "O valor total dos pedidos finalizados"),
+            @ApiResponse(responseCode = "404", description = "Não há vendas finalizadas")
+    })
+    public ResponseEntity<String> somarPedidosFinalizados() {
+        Double soma = produtoService.obterSomaPedidosFinalizados();
+        if (soma != null) {
+            return ResponseEntity.ok("O valor total dos pedidos finalizados é R$ " + String.format("%.2f", soma));
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Não há pedidos finalizados para calcular a soma.");
+        }
+    }
+
+    @Operation(summary = "Obter o total de itens no estoque")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Total de itens no estoque retornado com sucesso"),
+            @ApiResponse(responseCode = "404", description = "Não há itens cadastrados no estoque")
+    })
+    @GetMapping("/total-estoque")
+    public ResponseEntity<String> totalItensEmEstoque() {
+        Integer total = produtoService.obterTotalItensEmEstoque();
+        if (total != null) {
+            return ResponseEntity.ok("O total de itens no estoque é " + total);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Não há itens cadastrados no estoque.");
+        }
+    }
+
+    @Operation(summary = "Obter a quantidade de vendas realizadas")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Quantidade de vendas realizadas retornada com sucesso"),
+            @ApiResponse(responseCode = "404", description = "Não há vendas realizadas para contar")
+    })
+    @GetMapping("/pedidos/quantidade-realizadas")
+    public ResponseEntity<String> quantidadeVendasRealizadas() {
+        Integer quantidade = produtoService.obterQuantidadeVendasRealizadas();
+        if (quantidade != null) {
+            return ResponseEntity.ok("O número total de vendas realizadas é " + quantidade);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Não há vendas realizadas para contar.");
+        }
     }
 }
