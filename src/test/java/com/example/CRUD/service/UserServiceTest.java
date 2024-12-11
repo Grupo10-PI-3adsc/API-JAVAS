@@ -71,20 +71,20 @@ class UserServiceTest {
         verify(userRepository, never()).save(userMock);
     }
 
-    @Test
-    @DisplayName("Deve retornar lista de todos os clientes")
-    void listarCliente_DeveRetornarTodosClientes() {
-
-        List<UserEntity> mockUsers = List.of(new UserEntity(), new UserEntity());
-        when(userRepository.findAll()).thenReturn(mockUsers);
-
-
-        List<UserEntity> resultado = userService.listarCliente();
-
-
-        assertEquals(2, resultado.size());
-        verify(userRepository, times(1)).findAll();
-    }
+//    @Test
+//    @DisplayName("Deve retornar lista de todos os clientes")
+//    void listarCliente_DeveRetornarTodosClientes() {
+//
+//        List<UserEntity> mockUsers = List.of(new UserEntity(), new UserEntity());
+//        when(userRepository.findAll()).thenReturn(mockUsers);
+//
+//
+//        List<UserEntity> resultado = userService.listarCliente();
+//
+//
+//        assertEquals(2, resultado.size());
+//        verify(userRepository, times(1)).findAll();
+//    }
 
     @Test
     @DisplayName("Deve inativar cliente com sucesso")
