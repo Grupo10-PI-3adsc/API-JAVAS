@@ -1,10 +1,12 @@
 package com.example.CRUD.controller;
 
+import com.example.CRUD.Pedido;
 import com.example.CRUD.dto.produto.ProdutoDTO;
 import com.example.CRUD.dto.produto.ProdutoMapper;
 import com.example.CRUD.dto.produto.ProdutoResponseDto;
+import com.example.CRUD.entity.PedidosEntity;
 import com.example.CRUD.entity.ProdutoEntity;
-import com.example.CRUD.ordenacao.FilaObj;
+import com.example.CRUD.repository.PedidoRespository;
 import com.example.CRUD.repository.ProdutoRepository;
 import com.example.CRUD.service.ProdutoService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -29,6 +31,8 @@ public class ProdutoController {
     private ProdutoRepository pedidoProdutoRepository;
     @Autowired
     private ProdutoService produtoService;
+    @Autowired
+    private PedidoRespository pedidoRespository;
 
     @Operation(description = "Lista todos os produtos cadastrados")
     @ApiResponses(value = {
@@ -105,14 +109,18 @@ public class ProdutoController {
     }
 
 
-    @PostMapping("/pedidos")
-    public ResponseEntity<String> criarPedido(@RequestBody List<ProdutoEntity> carrinho) {
+    @PostMapping("/pedidos/{id}")
+    public ResponseEntity<String> criarPedido(@RequestBody List<Integer> carrinho, @PathVariable Integer id) {
         try {
-            return produtoService.adicionarPedido(carrinho);
+            return produtoService.adicionarPedido(carrinho, id);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Erro inesperado ao processar o pedido: " + e.getMessage());
         }
     }
 
+    @GetMapping("/pedidos")
+    public ResponseEntity<List<PedidosEntity>> listarPedidos() {
+        return ResponseEntity.ok(produtoService.listarPedido());
+    }
 }
