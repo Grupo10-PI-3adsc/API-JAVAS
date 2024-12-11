@@ -1,7 +1,12 @@
 package com.example.CRUD.service;
 
+import com.example.CRUD.Pedido;
+import com.example.CRUD.entity.ItensEntity;
+import com.example.CRUD.entity.PedidosEntity;
 import com.example.CRUD.entity.ProdutoEntity;
 import com.example.CRUD.ordenacao.FilaObj;
+import com.example.CRUD.repository.ItensRepository;
+import com.example.CRUD.repository.PedidoRespository;
 import com.example.CRUD.repository.ProdutoRepository;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -11,8 +16,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -20,7 +29,16 @@ import java.util.Optional;
 public class ProdutoService {
 
     @Autowired
+    private  UserService userService;
+
+    @Autowired
     private ProdutoRepository produtoRepository;
+
+    @Autowired
+    private PedidoRespository pedidoRespository;
+
+    @Autowired
+    private ItensRepository itensRepository;
 
     private final FilaObj<List<ProdutoEntity>> filaPedidos = new FilaObj<>(100);
 
@@ -68,19 +86,63 @@ public class ProdutoService {
     public Long quantidadeDeProdEmEstoque() {
         return produtoRepository.sumQuantidade();
     }
-    
-    public ResponseEntity<String> adicionarPedido(List<ProdutoEntity> carrinho) {
+
+    public ResponseEntity<String> adicionarPedido(List<Integer> carrinho, Integer fkUser) {
         if (carrinho == null || carrinho.isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("O carrinho está vazio. Não é possível adicionar um pedido.");
         }
 
+        List<ProdutoEntity> produtosCarrinho = new ArrayList<>();
+        for (int i = 0; i < carrinho.size(); i++) {
+            Optional<ProdutoEntity> sla = this.produtoPorId(carrinho.get(i));
+            produtosCarrinho.add(sla.orElse(null));
+        }
+
         try {
-            filaPedidos.insert(carrinho);
-            String mensagem = "Pedido adicionado à fila com sucesso! Contém " + carrinho.size() + " produtos.";
+            PedidosEntity pedido = new PedidosEntity();
+//            pedido.setDataPedido(LocalDateTime.now());
+            pedido.setFkUsuario(userService.userPorId(fkUser));
+            pedido.setTotal(
+                    produtosCarrinho.stream()
+                            .mapToDouble(ProdutoEntity::getPreco)
+                            .sum()
+            );
+            pedido = pedidoRespository.save(pedido);
+
+            Map<Integer, Long> produtoQuantidadeMap = produtosCarrinho.stream()
+                    .collect(Collectors.groupingBy(ProdutoEntity::getId, Collectors.counting()));
+
+            for (Map.Entry<Integer, Long> entry : produtoQuantidadeMap.entrySet()) {
+                Integer produtoId = entry.getKey();
+                Integer quantidade = Math.toIntExact(entry.getValue());
+
+                ProdutoEntity produto = produtosCarrinho.stream()
+                        .filter(p -> p.getId().equals(produtoId))
+                        .findFirst()
+                        .orElseThrow(() -> new RuntimeException("Produto não encontrado no carrinho"));
+
+                ItensEntity item = new ItensEntity();
+                item.setFkPedido(pedido);
+                item.setFkProduto(produto);
+                item.setQuantidadeProdutos(quantidade.intValue());
+                itensRepository.save(item);
+            }
+
+            String mensagem = "Pedido criado com sucesso! Contém " + carrinho.size() + " itens.";
             return ResponseEntity.ok(mensagem);
-        } catch (IllegalStateException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro: Fila cheia. Tente novamente mais tarde.");
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao processar o pedido: " + e.getMessage());
         }
     }
+
+    public List<PedidosEntity> listarPedido() {
+        List<PedidosEntity> pedidos = pedidoRespository.findAll();
+        if(pedidos.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Não a pedidos cadastrados");
+        }
+        return pedidos;
+    }
+
 
 }

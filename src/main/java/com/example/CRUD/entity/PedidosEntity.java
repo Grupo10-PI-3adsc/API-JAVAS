@@ -3,6 +3,7 @@ package com.example.CRUD.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
@@ -16,8 +17,9 @@ public class PedidosEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
-    private Date dataPedido;
+    @Column(name = "ID_Pedido")
+    private Integer id_pedido;
+    private LocalDateTime dataPedido;
     private Double total;
     private String status;
     private String observacoes;
