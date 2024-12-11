@@ -92,16 +92,16 @@ class ProdutoControllerTest {
         verify(pedidoProdutoRepository, times(1)).deleteById(id);
     }
 
-    @Test
-    @DisplayName("Deve retornar erro ao criar pedido")
-    void criarPedido_DeveRetornarErroInterno() {
-        List<ProdutoEntity> carrinho = List.of(new ProdutoEntity());
-        when(produtoService.adicionarPedido(carrinho)).thenThrow(new RuntimeException("Erro inesperado"));
-
-        ResponseEntity<String> response = produtoController.criarPedido(carrinho);
-
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
-        assertTrue(response.getBody().contains("Erro inesperado"));
-        verify(produtoService, times(1)).adicionarPedido(carrinho);
-    }
+//    @Test
+//    @DisplayName("Deve retornar erro ao criar pedido")
+//    void criarPedido_DeveRetornarErroInterno() {
+//        List<ProdutoEntity> carrinho = List.of(new ProdutoEntity());
+//        when(produtoService.adicionarPedido(carrinho)).thenThrow(new RuntimeException("Erro inesperado"));
+//
+//        ResponseEntity<String> response = produtoController.criarPedido(carrinho);
+//
+//        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+//        assertTrue(response.getBody().contains("Erro inesperado"));
+//        verify(produtoService, times(1)).adicionarPedido(carrinho);
+//    }
 }

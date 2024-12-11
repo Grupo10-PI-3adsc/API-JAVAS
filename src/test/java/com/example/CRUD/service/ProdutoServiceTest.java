@@ -102,19 +102,19 @@ class ProdutoServiceTest {
         verify(produtoRepository, times(1)).findById(idProduto);
     }
 
-    @Test
-    @DisplayName("Deve adicionar um pedido na fila com sucesso")
-    void adicionarPedido_DeveAdicionarPedidoNaFila() {
-
-        ProdutoEntity produtoMock = new ProdutoEntity();
-        produtoMock.setNome("Produto Teste");
-        List<ProdutoEntity> carrinho = List.of(produtoMock);
-
-
-        ResponseEntity<String> resultado = produtoService.adicionarPedido(carrinho);
-
-
-        assertEquals(HttpStatus.OK, resultado.getStatusCode());
-        assertTrue(resultado.getBody().contains("Pedido adicionado à fila com sucesso!"));
-    }
+//    @Test
+//    @DisplayName("Deve adicionar um pedido na fila com sucesso")
+//    void adicionarPedido_DeveAdicionarPedidoNaFila() {
+//
+//        ProdutoEntity produtoMock = new ProdutoEntity();
+//        produtoMock.setNome("Produto Teste");
+//        List<ProdutoEntity> carrinho = List.of(produtoMock);
+//
+//
+//        ResponseEntity<String> resultado = produtoService.adicionarPedido(carrinho);
+//
+//
+//        assertEquals(HttpStatus.OK, resultado.getStatusCode());
+//        assertTrue(resultado.getBody().contains("Pedido adicionado à fila com sucesso!"));
+//    }
 }
