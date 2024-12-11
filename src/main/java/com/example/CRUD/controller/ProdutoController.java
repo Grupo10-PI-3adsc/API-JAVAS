@@ -9,6 +9,7 @@ import com.example.CRUD.repository.PedidoRespository;
 import com.example.CRUD.repository.ProdutoRepository;
 import com.example.CRUD.service.ProdutoService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
@@ -109,7 +110,15 @@ public class ProdutoController {
 
 
     @PostMapping("/pedidos/{id}")
-    public ResponseEntity<String> criarPedido(@RequestBody List<Integer> carrinho, @PathVariable Integer id) {
+    @Operation(summary = "Criar um novo pedido", description = "Este endpoint cria um novo pedido a partir de um carrinho de produtos")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Pedido criado com sucesso"),
+            @ApiResponse(responseCode = "500", description = "Erro inesperado ao processar o pedido")
+    })
+    public ResponseEntity<String> criarPedido(
+            @Parameter(description = "Lista de IDs dos produtos no carrinho") @RequestBody List<Integer> carrinho,
+            @Parameter(description = "ID do cliente que está criando o pedido") @PathVariable Integer id) {
+
         try {
             return produtoService.adicionarPedido(carrinho, id);
         } catch (Exception e) {
@@ -119,11 +128,18 @@ public class ProdutoController {
     }
 
     @GetMapping("/pedidos")
+    @Operation(summary = "Listar todos os pedidos", description = "Este endpoint retorna todos os pedidos existentes")
+    @ApiResponse(responseCode = "200", description = "Lista de pedidos retornada com sucesso")
     public ResponseEntity<List<PedidosEntity>> listarPedidos() {
         return ResponseEntity.ok(produtoService.listarPedido());
     }
 
     @PutMapping("/pedidos/finalizar/{id}")
+    @Operation(summary = "Finalizar um pedido", description = "Este endpoint finaliza um pedido com o ID especificado")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Pedido finalizado com sucesso"),
+            @ApiResponse(responseCode = "404", description = "Pedido não encontrado")
+    })
     public ResponseEntity<PedidosEntity> finalizarPedido(@PathVariable Integer id) {
         return Optional.ofNullable(produtoService.finalizarPedido(id))
                 .map(pedido -> ResponseEntity.ok(pedido))
