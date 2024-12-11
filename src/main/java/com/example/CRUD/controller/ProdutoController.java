@@ -1,6 +1,5 @@
 package com.example.CRUD.controller;
 
-import com.example.CRUD.Pedido;
 import com.example.CRUD.dto.produto.ProdutoDTO;
 import com.example.CRUD.dto.produto.ProdutoMapper;
 import com.example.CRUD.dto.produto.ProdutoResponseDto;
@@ -122,5 +121,12 @@ public class ProdutoController {
     @GetMapping("/pedidos")
     public ResponseEntity<List<PedidosEntity>> listarPedidos() {
         return ResponseEntity.ok(produtoService.listarPedido());
+    }
+
+    @PutMapping("/pedidos/finalizar/{id}")
+    public ResponseEntity<PedidosEntity> finalizarPedido(@PathVariable Integer id) {
+        return Optional.ofNullable(produtoService.finalizarPedido(id))
+                .map(pedido -> ResponseEntity.ok(pedido))
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build()).getBody();
     }
 }
