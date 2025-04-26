@@ -15,6 +15,8 @@ public class WebConfig {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
         config.addAllowedOrigin("http://localhost:5173"); // Especifique o frontend
+        config.addAllowedOrigin("http://10.0.2.2:8080");
+        config.addAllowedOrigin("http://10.0.3.2:8080");
         config.addAllowedOrigin("https://purple-meadow-0d15dc30f.4.azurestaticapps.net"); // Especifique o frontend
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
