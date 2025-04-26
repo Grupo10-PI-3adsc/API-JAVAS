@@ -55,7 +55,7 @@ public class UserService {
 
     public List<UserEntity> listarCliente() {
 
-        return userRepository.findAll();
+        return userRepository.findAllByIsActiveTrue();
     }
 
     public UserEntity userPorId(int id) {
@@ -303,6 +303,8 @@ public class UserService {
         if (!userRepository.existsById(userEntity.getId())){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
+        UserEntity user = userRepository.findById(id).get();
+        userEntity.setSenha(user.getSenha());
         if (enderecoEntity != null) userEntity.setFkEndereco(enderecoEntity);
         return userRepository.save(userEntity);
     }

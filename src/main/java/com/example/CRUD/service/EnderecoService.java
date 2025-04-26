@@ -50,7 +50,7 @@ public class EnderecoService {
         Optional<EnderecoEntity> entityOptional = enderecoRepository.findById(id);
 
         if(entityOptional.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NO_CONTENT, "Endereço não encontrado!");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Endereço não encontrado!");
         }
         return entityOptional.get();
     }
