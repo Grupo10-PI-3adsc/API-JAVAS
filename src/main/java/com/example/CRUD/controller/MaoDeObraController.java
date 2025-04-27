@@ -17,7 +17,7 @@ import java.util.List;
 
 @Hidden
 @RestController
-@RequestMapping("/mao-de-obra")
+@RequestMapping("/api/mao-de-obra")
 public class MaoDeObraController {
 
 
