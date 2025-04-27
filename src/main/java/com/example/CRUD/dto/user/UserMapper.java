@@ -40,6 +40,33 @@ public class UserMapper {
 
         EnderecoEntity endereco = user.getFkEndereco();
 
+        if (endereco != null)
+
+            return UserDTOResponse
+                    .builder()
+                    .nome(user.getNome())
+                    .email(user.getEmail())
+                    .cpfCnpj(user.getCpfCnpj())
+                    .telefone(user.getTelefone())
+                    .senha(user.getPassword())
+                    .role(user.getRole())
+                    .endereco(
+                            UserDTOResponse.UsuarioEnderecoResponseDto
+                                    .builder()
+                                    .bairro(endereco.getBairro())
+                                    .cep(endereco.getCep())
+                                    .complemento(endereco.getComplemento())
+                                    .ddd(endereco.getDdd())
+                                    .gia(endereco.getGia())
+                                    .ibge(endereco.getIbge())
+                                    .uf(endereco.getUf())
+                                    .localidade(endereco.getLocalidade())
+                                    .siafi(endereco.getSiafi())
+                                    .logradouro(endereco.getLogradouro())
+                                    .build()
+                    )
+                    .build();
+
         return UserDTOResponse
                 .builder()
                 .nome(user.getNome())
@@ -49,19 +76,7 @@ public class UserMapper {
                 .senha(user.getPassword())
                 .role(user.getRole())
                 .endereco(
-                        UserDTOResponse.UsuarioEnderecoResponseDto
-                                .builder()
-                                .bairro(endereco.getBairro())
-                                .cep(endereco.getCep())
-                                .complemento(endereco.getComplemento())
-                                .ddd(endereco.getDdd())
-                                .gia(endereco.getGia())
-                                .ibge(endereco.getIbge())
-                                .uf(endereco.getUf())
-                                .localidade(endereco.getLocalidade())
-                                .siafi(endereco.getSiafi())
-                                .logradouro(endereco.getLogradouro())
-                                .build()
+                    null
                 )
                 .build();
 
