@@ -31,6 +31,8 @@ public class UserMapper {
                 .email(user.getEmail())
                 .password(user.getPassword())
                 .nome(user.getNome())
+                .cpfCnpj(user.getCpfCnpj())
+                .telefone(user.getTelefone())
                 .token(token)
                 .endereco(
                         LoginResponseDTO.UsuarioEnderecoResponseDto
