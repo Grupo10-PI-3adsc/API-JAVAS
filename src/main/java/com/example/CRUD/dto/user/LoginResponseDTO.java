@@ -16,9 +16,8 @@ public class LoginResponseDTO {
     private String password;
     private String cpfCnpj;
     private String telefone;
-    private permissionSets role;
     private String token;
-    private LoginResponseDTO.UsuarioEnderecoResponseDto endereco;
+    private UsuarioEnderecoResponseDto endereco;
 
 
     @Data

@@ -19,6 +19,7 @@ public class ProdutoMapper {
                 .fornecedor(dto.getFornecedor())
                 .localizacao(dto.getLocalizacao())
                 .dataAtualizcao(LocalDate.now())
+                .codBarra(dto.getCodBarra())
                 .imagemUrl(dto.getImagemUrl())
                 .build();
     }
@@ -36,6 +37,7 @@ public class ProdutoMapper {
                 .fornecedor(entity.getFornecedor())
                 .localizacao(entity.getLocalizacao())
                 .dataAtualizcao(entity.getDataAtualizcao())
+                .codBarra(entity.getCodBarra())
                 .imagemUrl(entity.getImagemUrl())
                 .build();
     }
