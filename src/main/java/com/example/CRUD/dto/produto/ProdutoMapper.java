@@ -41,4 +41,18 @@ public class ProdutoMapper {
                 .imagemUrl(entity.getImagemUrl())
                 .build();
     }
+
+    public static ProdutoPedidoResponseDto toDtoPedido(ProdutoEntity entity) {
+        if(entity == null) return null;
+
+        return ProdutoPedidoResponseDto
+                .builder()
+                .nome(entity.getNome())
+                .categoria(entity.getCategoria())
+                .descricao(entity.getDescricao())
+                .preco(entity.getPreco())
+                .codBarra(entity.getCodBarra())
+                .imagemUrl(entity.getImagemUrl())
+                .build();
+    }
 }

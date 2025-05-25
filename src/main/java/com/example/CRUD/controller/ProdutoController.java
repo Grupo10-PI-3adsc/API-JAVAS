@@ -1,5 +1,8 @@
 package com.example.CRUD.controller;
 
+import com.example.CRUD.dto.pedidos.PedidosDTO;
+import com.example.CRUD.dto.pedidos.PedidosMapper;
+import com.example.CRUD.dto.pedidos.PedidosResponseDto;
 import com.example.CRUD.dto.produto.ProdutoDTO;
 import com.example.CRUD.dto.produto.ProdutoDashDTO;
 import com.example.CRUD.dto.produto.ProdutoMapper;
@@ -21,6 +24,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -130,8 +134,18 @@ public class ProdutoController {
     @GetMapping("/pedidos")
     @Operation(summary = "Listar todos os pedidos", description = "Este endpoint retorna todos os pedidos existentes")
     @ApiResponse(responseCode = "200", description = "Lista de pedidos retornada com sucesso")
-    public ResponseEntity<List<PedidosEntity>> listarPedidos() {
-        return ResponseEntity.ok(produtoService.listarPedido());
+    public ResponseEntity<List<PedidosResponseDto>> listarPedidos() {
+        List<PedidosEntity> pedidos = produtoService.listarPedido();
+        List<PedidosResponseDto> pedidosProduto = new ArrayList<>();
+
+        for (PedidosEntity p : pedidos) {
+            List<ProdutoEntity> produtos = new ArrayList<>();
+            produtos.addAll(produtoService.listarProdutoPorIdPedido(p.getId_pedido()));
+            pedidosProduto.add(PedidosMapper.toDto(p, produtos));
+        }
+
+//        return ResponseEntity.ok(pedidos.stream().map(PedidosMapper :: toDto).toList());
+        return ResponseEntity.ok(pedidosProduto);
     }
 
     @PutMapping("/pedidos/finalizar/{id}")
