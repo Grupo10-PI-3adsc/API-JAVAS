@@ -36,11 +36,15 @@ VALUES
 INSERT INTO Pedidos (ID_Pedido, dataPedido, total, status, observacoes, fk_usuario)
 VALUES
   (1, CURRENT_DATE, 145.00, 'PENDENTE', 'Troca de óleo e filtro', 2),
-  (2, CURRENT_DATE, 340.00, 'CONCLUIDO', 'Compra de pneu', 3);
+  (2, CURRENT_DATE, 340.00, 'CONCLUIDO', 'Compra de pneu', 3),
+  (3, CURRENT_DATE, 75.00, 'PENDENTE', 'Filtro comprado em dois momentos + óleo', 3);
 
 -- ITENS DOS PEDIDOS (Servico_Produtos)
 INSERT INTO servico_produtos (ID_Servico_Produto, Quantidade_Produtos, ID_Produto, ID_Pedido)
 VALUES
   (1, 1, 1, 1),  -- Óleo
   (2, 1, 2, 1),  -- Filtro de Óleo
-  (3, 1, 3, 2);  -- Pneu
+  (3, 1, 3, 2),  -- Pneu
+  (4, 1, 2, 3),
+  (5, 2, 2, 3),
+  (6, 1, 1, 3);
