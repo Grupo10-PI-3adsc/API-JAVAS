@@ -20,6 +20,7 @@ public class PedidosEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID_Pedido")
     private Integer id_pedido;
+    @Column(name = "DATAPEDIDO")
     private LocalDate dataPedido;
     private Double total;
     private String status;

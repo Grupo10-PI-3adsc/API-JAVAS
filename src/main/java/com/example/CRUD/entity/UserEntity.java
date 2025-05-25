@@ -49,8 +49,10 @@ public class UserEntity implements UserDetails {
     @Column(name = "Data_Cadastro")
     private LocalDate dataCadastro;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "Funcao")
     private permissionSets role;
+
 
     @Column(name = "codigo_recuperar_senha")
     private String codigo_recuperar_senha;
@@ -91,7 +93,7 @@ public class UserEntity implements UserDetails {
         } else {
             return List.of(new SimpleGrantedAuthority("ROLE_USER"));
         }
-      
+
     }
 
     @Override
