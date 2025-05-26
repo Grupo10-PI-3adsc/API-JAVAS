@@ -46,6 +46,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/usuarios").hasAnyRole("SYS_ADM", "GERENTE", "FUNC")
                         .requestMatchers(HttpMethod.GET, "/produtos/listar-produtos").permitAll()
                         .requestMatchers(HttpMethod.GET, "/produtos/{id}").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/produto/buscar-por-nome").permitAll()
 
                         // Permissões PUT
                         .requestMatchers(HttpMethod.PUT, "/produtos/{id}").hasAnyRole("SYS_ADM", "GERENTE")
