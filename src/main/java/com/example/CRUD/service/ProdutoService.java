@@ -18,10 +18,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -140,9 +137,17 @@ public class ProdutoService {
     public List<PedidosEntity> listarPedido() {
         List<PedidosEntity> pedidos = pedidoRespository.findAll();
         if(pedidos.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Não a pedidos cadastrados");
+            throw new ResponseStatusException(HttpStatus.NO_CONTENT, "Não a pedidos cadastrados");
         }
         return pedidos;
+    }
+
+    public PedidosEntity listarPedidoPorId(Integer id) {
+        Optional<PedidosEntity> pedidos = pedidoRespository.findById(id);
+        if(pedidos.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Não a pedidos cadastrados");
+        }
+        return pedidos.get();
     }
 
     public ResponseEntity<PedidosEntity> finalizarPedido(Integer id) {
@@ -166,5 +171,15 @@ public class ProdutoService {
 
     public Integer obterQuantidadeVendasRealizadas() {
         return pedidoRespository.contarVendasRealizadas(LocalDate.now().withDayOfMonth(1));
+    }
+
+    public List<ProdutoEntity> listarProdutoPorIdPedido(Integer idPedido) {
+        PedidosEntity pedido = listarPedidoPorId(idPedido);
+        List<ItensEntity> itens = itensRepository.findAllByFkPedido(pedido);
+        List<ProdutoEntity> produtos = new ArrayList<>();
+        for (ItensEntity p : itens){
+            produtos.add(produtoPorId(p.getFkProduto().getId()).get());
+        }
+        return produtos;
     }
 }
