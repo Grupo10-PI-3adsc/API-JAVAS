@@ -70,6 +70,17 @@ public class ProdutoController {
         return ResponseEntity.created(null).body(responseDto);
     }
 
+    @Operation(description = "Busca produto por nome, retornando um especifico ou todos relacionados")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Protudos encontrados com sucesso"),
+            @ApiResponse(responseCode = "204", description = "Produtos não encontrado")
+    })
+    @GetMapping("/buscar-por-nome")
+    public ResponseEntity<List<ProdutoEntity>> buscarPorNome(@RequestParam String nome) {
+        return ResponseEntity.ok(produtoService.buscarPorNome(nome));
+    }
+
+
     @Operation(description = "Atualiza um produto existente")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Produto atualizado com sucesso"),
