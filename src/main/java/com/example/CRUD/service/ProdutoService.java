@@ -1,5 +1,6 @@
 package com.example.CRUD.service;
 
+import com.example.CRUD.dto.produto.ProdutoDTO;
 import com.example.CRUD.entity.ItensEntity;
 import com.example.CRUD.entity.PedidosEntity;
 import com.example.CRUD.entity.ProdutoEntity;
@@ -71,6 +72,17 @@ public class ProdutoService {
         }
         throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Produto não encontrado");
     }
+
+    public List<ProdutoEntity> buscarPorNome(String nome) {
+        if (nome != null && nome.length() >= 3 && !nome.isBlank()) {
+            List<ProdutoEntity> produtos = produtoRepository.findByNomeContainingIgnoreCase(nome);
+            if (!produtos.isEmpty()) {
+                return produtos;
+            }
+        }
+        throw new ResponseStatusException(HttpStatus.NO_CONTENT, "Nenhum produto encontrado com esse nome");
+    }
+
 
     public List<ProdutoEntity> listarPorCategoria(String categoria) {
         List<ProdutoEntity> produtoPorCategoria = produtoRepository.findAllByCategoria(categoria);

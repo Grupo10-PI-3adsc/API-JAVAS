@@ -24,11 +24,35 @@ public class UserMapper {
     public static LoginResponseDTO toDTOLogin(UserEntity user, String token) {
         if (user == null) return null;
 
+        EnderecoEntity endereco = user.getFkEndereco();
+
+        if (endereco != null)
+
         return LoginResponseDTO
                 .builder()
-                .email(user.getEmail())
-                .password(user.getPassword())
                 .nome(user.getNome())
+                .email(user.getEmail())
+                .cpfCnpj(user.getCpfCnpj())
+                .telefone(user.getTelefone())
+                .password(user.getPassword())
+                .token(token)
+                .endereco(LoginResponseDTO.UsuarioEnderecoResponseDto
+                        .builder()
+                        .uf(endereco.getUf())
+                        .cep(endereco.getCep())
+                        .bairro(endereco.getBairro())
+                        .localidade(endereco.getLocalidade())
+                        .build())
+                .build();
+
+
+        return LoginResponseDTO
+                .builder()
+                .nome(user.getNome())
+                .email(user.getEmail())
+                .cpfCnpj(user.getCpfCnpj())
+                .telefone(user.getTelefone())
+                .password(user.getPassword())
                 .token(token)
                 .build();
 
