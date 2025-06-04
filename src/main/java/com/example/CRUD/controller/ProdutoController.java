@@ -1,5 +1,6 @@
 package com.example.CRUD.controller;
 
+import com.example.CRUD.dto.pedidos.PedidoRequisicao;
 import com.example.CRUD.dto.pedidos.PedidosDTO;
 import com.example.CRUD.dto.pedidos.PedidosMapper;
 import com.example.CRUD.dto.pedidos.PedidosResponseDto;
@@ -146,17 +147,17 @@ public class ProdutoController {
             @ApiResponse(responseCode = "200", description = "Pedido criado com sucesso"),
             @ApiResponse(responseCode = "500", description = "Erro inesperado ao processar o pedido")
     })
-    public ResponseEntity<String> criarPedido(
-            @Parameter(description = "Lista de IDs dos produtos no carrinho") @RequestBody List<Integer> carrinho,
-            @Parameter(description = "Boolean para verificar se cliequer quer instacao") @RequestBody Boolean intalacao,
+    public ResponseEntity<PedidosResponseDto> criarPedido(
+            @Parameter(description = "DTO com lista e boolean") @RequestBody PedidoRequisicao pedido,
             @Parameter(description = "ID do cliente que está criando o pedido") @PathVariable Integer id) {
 
-        try {
-            return produtoService.adicionarPedido(carrinho, intalacao, id);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Erro inesperado ao processar o pedido: " + e.getMessage());
-        }
+        PedidosEntity pedidos = produtoService.adicionarPedido(pedido.getCarrinho(), pedido.getIntalacao(), id);
+
+        List<ProdutoEntity> produtos = new ArrayList<>();
+        produtos.addAll(produtoService.listarProdutoPorIdPedido(pedidos.getId_pedido()));
+
+        return ResponseEntity.created(null).body(PedidosMapper.toDto(pedidos, produtos));
+
     }
 
     @GetMapping("/pedidos")
@@ -183,9 +184,17 @@ public class ProdutoController {
             @ApiResponse(responseCode = "404", description = "Pedido não encontrado")
     })
     public ResponseEntity<PedidosEntity> finalizarPedido(@PathVariable Integer id) {
-        return Optional.ofNullable(produtoService.finalizarPedido(id))
-                .map(pedido -> ResponseEntity.ok(pedido))
-                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build()).getBody();
+        return ResponseEntity.ok(produtoService.finalizarPedido(id));
+    }
+
+    @PutMapping("/pedidos/pago/{id}")
+    @Operation(summary = "Finalizar um pedido", description = "Este endpoint finaliza um pedido com o ID especificado")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Pedido finalizado com sucesso"),
+            @ApiResponse(responseCode = "404", description = "Pedido não encontrado")
+    })
+    public ResponseEntity<PedidosEntity> pagarPedido(@PathVariable Integer id) {
+        return ResponseEntity.ok(produtoService.pagarPedido(id));
     }
 
 
