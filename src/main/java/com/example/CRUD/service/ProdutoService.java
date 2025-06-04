@@ -97,7 +97,7 @@ public class ProdutoService {
         return produtoRepository.sumQuantidade();
     }
 
-    public ResponseEntity<String> adicionarPedido(List<Integer> carrinho, Integer fkUser) {
+    public ResponseEntity<String> adicionarPedido(List<Integer> carrinho, Boolean instalacao, Integer fkUser) {
         if (carrinho == null || carrinho.isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("O carrinho está vazio. Não é possível adicionar um pedido.");
         }
@@ -117,6 +117,7 @@ public class ProdutoService {
                             .mapToDouble(ProdutoEntity::getPreco)
                             .sum()
             );
+            pedido.setInstalacao(instalacao);
             pedido = pedidoRespository.save(pedido);
 
             Map<Integer, Long> produtoQuantidadeMap = produtosCarrinho.stream()
@@ -193,5 +194,13 @@ public class ProdutoService {
             produtos.add(produtoPorId(p.getFkProduto().getId()).get());
         }
         return produtos;
+    }
+
+    public List<PedidosEntity> listarPedidoUsuario(Integer id) {
+        List<PedidosEntity> pedidos = pedidoRespository.findAllByFkUsuario_Id(id);
+        if(pedidos.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Não a pedidos cadastrados");
+        }
+        return pedidos;
     }
 }
