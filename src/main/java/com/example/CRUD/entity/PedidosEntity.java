@@ -25,6 +25,7 @@ public class PedidosEntity {
     private Double total;
     private String status;
     private String observacoes;
+    private Boolean instalacao;
 
     @ManyToOne
     @JoinColumn(name = "fk_usuario", referencedColumnName = "Id")

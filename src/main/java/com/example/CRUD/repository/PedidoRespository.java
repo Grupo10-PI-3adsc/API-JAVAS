@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
+import java.util.List;
 
 public interface PedidoRespository extends JpaRepository<PedidosEntity, Integer> {
 
@@ -15,4 +16,5 @@ public interface PedidoRespository extends JpaRepository<PedidosEntity, Integer>
     @Query("SELECT COUNT(p) FROM PedidosEntity p WHERE p.status = 'Finalizado'")
     Integer contarVendasRealizadas(@Param("dataInicio") LocalDate dataInicio);
 
+    List<PedidosEntity> findAllByFkUsuario_Id(Integer id);
 }

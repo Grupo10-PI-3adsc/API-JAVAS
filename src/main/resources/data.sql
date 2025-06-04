@@ -8,9 +8,9 @@ VALUES
 -- USUÁRIOS
 INSERT INTO usuario (Id, Nome, CPF_CNPJ, Telefone, Email, Senha, Ativo, Data_Cadastro, Funcao, codigo_recuperar_senha, validade_codigo_senha, fk_endereco_id)
 VALUES
-  (1, 'Alice Admin', '11111111111', '11999990000', 'alice@admin.com', '$2a$10$NdM9BmDQMCaqyig57FcH7.WLlnLfGp7SzSm4Oy5YRQs8YnOaKGNPm', TRUE, CURRENT_DATE, 'SYS_ADM', NULL, NULL, 1),
-  (2, 'Bruno Gerente', '22222222222', '11988880000', 'bruno@gerente.com', '$2a$10$x.iozsuniSMd0R/cLmXhHuW9a4w5ks3iRkaLofbMvYR6hSeibnHj.', TRUE, CURRENT_DATE, 'GERENTE', NULL, NULL, 2),
-  (3, 'Clara Cliente', '33333333333', '11977770000', 'clara@user.com', '$2a$10$niN8fTTGpt.HrJgPVdO.QeAOCiPs5QUj/anAwEV7Qg4NfR69dkngm', TRUE, CURRENT_DATE, 'USER', NULL, NULL, 3);
+  (1, 'Alice Admin', '11111111111', '11999990000', 'alice@admin.com', '$2a$10$NdM9BmDQMCaqyig57FcH7.WLlnLfGp7SzSm4Oy5YRQs8YnOaKGNPm', TRUE, CURRENT_DATE, 0, NULL, NULL, 1),
+  (2, 'Bruno Gerente', '22222222222', '11988880000', 'bruno@gerente.com', '$2a$10$x.iozsuniSMd0R/cLmXhHuW9a4w5ks3iRkaLofbMvYR6hSeibnHj.', TRUE, CURRENT_DATE, 1, NULL, NULL, 2),
+  (3, 'Clara Cliente', '33333333333', '11977770000', 'clara@user.com', '$2a$10$niN8fTTGpt.HrJgPVdO.QeAOCiPs5QUj/anAwEV7Qg4NfR69dkngm', TRUE, CURRENT_DATE, 3, NULL, NULL, 3);
 
 -- clara@user.com    -    user123
 -- alice@admin.com    -    admin123
