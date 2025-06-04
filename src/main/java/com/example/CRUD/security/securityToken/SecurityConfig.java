@@ -66,6 +66,11 @@ public class SecurityConfig {
                         // Qualquer outra requisição precisa ser autenticada
                         .anyRequest().authenticated()
                 )
+                .headers(headers -> headers
+                        .frameOptions(frameOptions -> frameOptions
+                                .sameOrigin() // Permite que a página seja exibida em um frame do mesmo domínio (melhor prática)
+                        )
+                )
                 .exceptionHandling(exceptionHandling -> exceptionHandling
                         .accessDeniedHandler(accessDeniedHandler)  // Define o manipulador de acesso negado personalizado
                 )
