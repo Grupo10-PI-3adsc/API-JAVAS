@@ -4,6 +4,7 @@ import com.example.CRUD.dto.produto.ProdutoDTO;
 import com.example.CRUD.entity.ItensEntity;
 import com.example.CRUD.entity.PedidosEntity;
 import com.example.CRUD.entity.ProdutoEntity;
+import com.example.CRUD.entity.UserEntity;
 import com.example.CRUD.ordenacao.FilaObj;
 import com.example.CRUD.repository.ItensRepository;
 import com.example.CRUD.repository.PedidoRespository;
@@ -97,9 +98,12 @@ public class ProdutoService {
         return produtoRepository.sumQuantidade();
     }
 
-    public ResponseEntity<String> adicionarPedido(List<Integer> carrinho, Boolean instalacao, Integer fkUser) {
+    public PedidosEntity adicionarPedido(List<Integer> carrinho, Boolean instalacao, Integer fkUser) {
         if (carrinho == null || carrinho.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("O carrinho está vazio. Não é possível adicionar um pedido.");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "O carrinho está vazio. Não é possível adicionar um pedido.");
+        }
+        if (instalacao == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Não foi expecificado a intação.");
         }
 
         List<ProdutoEntity> produtosCarrinho = new ArrayList<>();
@@ -108,43 +112,35 @@ public class ProdutoService {
             produtosCarrinho.add(sla.orElse(null));
         }
 
-        try {
-            PedidosEntity pedido = new PedidosEntity();
+        PedidosEntity pedido = new PedidosEntity();
 //            pedido.setDataPedido(LocalDateTime.now());
-            pedido.setFkUsuario(userService.userPorId(fkUser));
-            pedido.setTotal(
-                    produtosCarrinho.stream()
-                            .mapToDouble(ProdutoEntity::getPreco)
-                            .sum()
-            );
-            pedido.setInstalacao(instalacao);
-            pedido = pedidoRespository.save(pedido);
+        pedido.setFkUsuario(userService.userPorId(fkUser));
+        pedido.setTotal(
+                produtosCarrinho.stream()
+                        .mapToDouble(ProdutoEntity::getPreco)
+                        .sum()
+        );
 
-            Map<Integer, Long> produtoQuantidadeMap = produtosCarrinho.stream()
-                    .collect(Collectors.groupingBy(ProdutoEntity::getId, Collectors.counting()));
-
-            for (Map.Entry<Integer, Long> entry : produtoQuantidadeMap.entrySet()) {
-                Integer produtoId = entry.getKey();
-                Integer quantidade = Math.toIntExact(entry.getValue());
-
-                ProdutoEntity produto = produtosCarrinho.stream()
-                        .filter(p -> p.getId().equals(produtoId))
-                        .findFirst()
-                        .orElseThrow(() -> new RuntimeException("Produto não encontrado no carrinho"));
-
+        pedido.setInstalacao(instalacao);
+        pedido.setStatus("Aguardando");
+        pedido = pedidoRespository.save(pedido);
+        try{
+            for (ProdutoEntity produto : produtosCarrinho) {
                 ItensEntity item = new ItensEntity();
                 item.setFkPedido(pedido);
                 item.setFkProduto(produto);
-                item.setQuantidadeProdutos(quantidade.intValue());
+                item.setQuantidadeProdutos(1); // Use the 'quantidade' for this specific product
                 itensRepository.save(item);
             }
 
-            String mensagem = "Pedido criado com sucesso! Contém " + carrinho.size() + " itens.";
-            return ResponseEntity.ok(mensagem);
 
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao processar o pedido: " + e.getMessage());
+        } catch (RuntimeException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Erro ao processar o pedido: " + e.getMessage());
         }
+
+        String mensagem = "Pedido criado com sucesso! Contém " + carrinho.size() + " itens.";
+        return pedido;
+
     }
 
     public List<PedidosEntity> listarPedido() {
@@ -163,15 +159,20 @@ public class ProdutoService {
         return pedidos.get();
     }
 
-    public ResponseEntity<PedidosEntity> finalizarPedido(Integer id) {
-        PedidosEntity pedido = pedidoRespository.findById(id).get();
+    public PedidosEntity finalizarPedido(Integer id) {
+        PedidosEntity pedido = listarPedidoPorId(id);
 
-        if(pedido.getId_pedido() == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
-        pedido.setStatus("finalizado");
+        pedido.setStatus("Concluído");
         pedidoRespository.save(pedido);
-        return ResponseEntity.ok().body(pedido);
+        return pedido;
+    }
+
+    public PedidosEntity pagarPedido(Integer id) {
+        PedidosEntity pedido = listarPedidoPorId(id);
+
+        pedido.setStatus("Pago");
+        pedidoRespository.save(pedido);
+        return pedido;
     }
 
     public Double obterSomaPedidosFinalizados() {
