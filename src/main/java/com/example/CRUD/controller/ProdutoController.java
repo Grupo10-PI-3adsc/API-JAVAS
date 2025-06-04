@@ -109,18 +109,34 @@ public class ProdutoController {
         return ResponseEntity.status(404).build();
     }
 
-    @Operation(description = "Lista os pedidos relacionados a um produto pelo ID")
+    @Operation(description = "Lista os produtos relacionados a um pedido pelo ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Total de pedidos do produto"),
             @ApiResponse(responseCode = "204", description = "Produto não encontrado")
     })
     @GetMapping("/pedidos/{id}")
-    public ResponseEntity<String> pedidosPorid(@PathVariable Integer id) {
-        Optional<ProdutoEntity> produtoOpt = pedidoProdutoRepository.findById(id);
-        if(produtoOpt.isEmpty()) {
-            return ResponseEntity.status(204).build();
+    public ResponseEntity<PedidosResponseDto> pedidosPorid(@PathVariable Integer id) {
+        PedidosEntity pedido = produtoService.listarPedidoPorId(id);
+
+        List<ProdutoEntity> produtos = new ArrayList<>();
+        produtos.addAll(produtoService.listarProdutoPorIdPedido(pedido.getId_pedido()));
+
+        return ResponseEntity.status(200).body(PedidosMapper.toDto(pedido, produtos));
+    }
+
+    @GetMapping("/pedidos/usuario/{id}")
+    public ResponseEntity<List<PedidosResponseDto>> pedidosPoridUsuario(@PathVariable Integer id) {
+        List<PedidosEntity> pedidos = produtoService.listarPedidoUsuario(id);
+        List<PedidosResponseDto> pedidosProduto = new ArrayList<>();
+
+        for (PedidosEntity p : pedidos) {
+            List<ProdutoEntity> produtos = new ArrayList<>();
+            produtos.addAll(produtoService.listarProdutoPorIdPedido(p.getId_pedido()));
+            pedidosProduto.add(PedidosMapper.toDto(p, produtos));
         }
-        return ResponseEntity.status(200).body("O total de todos os pedidos de Produto: RS" + produtoOpt.get().calcularPedido());
+
+//        return ResponseEntity.ok(pedidos.stream().map(PedidosMapper :: toDto).toList());
+        return ResponseEntity.ok(pedidosProduto);
     }
 
 
@@ -132,10 +148,11 @@ public class ProdutoController {
     })
     public ResponseEntity<String> criarPedido(
             @Parameter(description = "Lista de IDs dos produtos no carrinho") @RequestBody List<Integer> carrinho,
+            @Parameter(description = "Boolean para verificar se cliequer quer instacao") @RequestBody Boolean intalacao,
             @Parameter(description = "ID do cliente que está criando o pedido") @PathVariable Integer id) {
 
         try {
-            return produtoService.adicionarPedido(carrinho, id);
+            return produtoService.adicionarPedido(carrinho, intalacao, id);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Erro inesperado ao processar o pedido: " + e.getMessage());
@@ -170,6 +187,7 @@ public class ProdutoController {
                 .map(pedido -> ResponseEntity.ok(pedido))
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build()).getBody();
     }
+
 
 
     @Operation(summary = "Obter dados para dash")

@@ -49,7 +49,7 @@ public class UserEntity implements UserDetails {
     @Column(name = "Data_Cadastro")
     private LocalDate dataCadastro;
 
-    @Enumerated(EnumType.STRING)
+    @Enumerated(EnumType.ORDINAL) // Use this if database stores 0, 1, 2, 3
     @Column(name = "Funcao")
     private permissionSets role;
 
