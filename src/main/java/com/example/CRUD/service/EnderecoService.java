@@ -27,13 +27,14 @@ public class EnderecoService {
 
     public EnderecoEntity save(EnderecoEntity novoEndereco, Integer numero) {
         novoEndereco.setNumero(numero);
-        Optional<EnderecoEntity> endereco = enderecoRepository.findByCepAndNumero(
-                novoEndereco.getCep(), numero);
+//        Optional<EnderecoEntity> endereco = enderecoRepository.findByCepAndNumero(
+//                novoEndereco.getCep(), numero);
 
-        if (endereco.isPresent()){
-            throw new ResponseStatusException(HttpStatus.CONFLICT);
-        }
-            return enderecoRepository.save(novoEndereco);
+//        if (endereco.isPresent()){
+//            throw new ResponseStatusException(HttpStatus.CONFLICT);
+//        }
+        novoEndereco.setIsActive(true);
+        return enderecoRepository.save(novoEndereco);
 
     }
 
