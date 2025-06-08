@@ -27,10 +27,10 @@ VALUES
 -- PRODUTOS
 INSERT INTO produtos (id_produto, nome, descricao, categoria, qtd_estoque, preco, fornecedor, localizacao, data_atualizacao, cod_barra, imagem_url)
 VALUES
-  (1, 'Óleo 5W30', 'Lubrificante sintético', 'Lubrificantes', 50, 35.00, 'Petrobras', 'Estoque 1', CURRENT_DATE, '7890000000001', NULL),
-  (2, 'Filtro de Óleo', 'Filtro compatível com carros populares', 'Filtros', 30, 20.00, 'Bosch', 'Estoque 2', CURRENT_DATE, '7890000000002', NULL),
-  (3, 'Pneu Aro 15', 'Pneu de alta performance', 'Pneus', 15, 250.00, 'Michelin', 'Estoque 3', CURRENT_DATE, '7890000000003', NULL),
-  (4, 'Pastilha de Freio', 'Pastilha dianteira', 'Freios', 40, 90.00, 'Fremax', 'Estoque 4', CURRENT_DATE, '7890000000004', NULL);
+  (1, 'Óleo 5W30', 'Lubrificante sintético', 'Lubrificantes', 50, 35.00, 'Petrobras', 'Estoque 1', CURRENT_DATE, '7890000000001', 'https://static.autopecasmarques.com.br/public/marquesautopecas/imagens/produtos/oleo-motor-5w30-dexos-sintetico-mobil-d1-lubrificante-1-l-63515f1ed927f.jpg'),
+  (2, 'Filtro de Óleo', 'Filtro compatível com carros populares', 'Filtros', 30, 20.00, 'Bosch', 'Estoque 2', CURRENT_DATE, '7890000000002', 'https://motobr.vtexassets.com/arquivos/ids/269056-1200-auto?v=638338580319100000&width=1200&height=auto&aspect=true'),
+  (3, 'Pneu Aro 15', 'Pneu de alta performance', 'Pneus', 15, 250.00, 'Michelin', 'Estoque 3', CURRENT_DATE, '7890000000003', 'https://dpaschoal.vtexassets.com/arquivos/ids/274717-800-auto?v=638528676796500000&width=800&height=auto&aspect=true'),
+  (4, 'Pastilha de Freio', 'Pastilha dianteira', 'Freios', 40, 90.00, 'Fremax', 'Estoque 4', CURRENT_DATE, '7890000000004', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRjwvNJ8RKcIl3dvzZR-RCF56M870gzq_PWYA&s');
 
 -- PEDIDOS
 INSERT INTO Pedidos (ID_Pedido, dataPedido, total, status, observacoes, fk_usuario)

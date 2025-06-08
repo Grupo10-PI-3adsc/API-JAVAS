@@ -38,8 +38,9 @@ public class UserService {
     public UserEntity save(UserEntity user) {
 
         Optional<UserEntity> userEntityOptional =  userRepository.findByEmail(user.getEmail());
+        Optional<UserEntity> userEntityOptionalCpf =  userRepository.findByCpfCnpj(user.getCpfCnpj());
 
-        if (userEntityOptional.isPresent()){
+        if (userEntityOptional.isPresent() || userEntityOptionalCpf.isPresent()){
             throw (new JaCadastradoException("Usuario Já cadastrado"));
         }
 
@@ -300,12 +301,15 @@ public class UserService {
 
     public UserEntity atualizar(UserEntity userEntity, Integer id, EnderecoEntity enderecoEntity) {
         userEntity.setId(id);
-        if (!userRepository.existsById(userEntity.getId())){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        UserEntity user = userPorId(id);
+        userEntity.setSenha(passwordEncoder.encode(user.getSenha()));
+        userEntity.setEmail(user.getEmail());
+        userEntity.setCpfCnpj(user.getCpfCnpj());
+        if (enderecoEntity != null) {
+            userEntity.setFkEndereco(enderecoEntity);
+        }else if (user.getFkEndereco() != null){
+            userEntity.setFkEndereco(user.getFkEndereco());
         }
-        UserEntity user = userRepository.findById(id).get();
-        userEntity.setSenha(user.getSenha());
-        if (enderecoEntity != null) userEntity.setFkEndereco(enderecoEntity);
         return userRepository.save(userEntity);
     }
 
