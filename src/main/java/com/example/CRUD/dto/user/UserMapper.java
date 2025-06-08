@@ -28,22 +28,25 @@ public class UserMapper {
 
         if (endereco != null)
 
-        return LoginResponseDTO
-                .builder()
-                .nome(user.getNome())
-                .email(user.getEmail())
-                .cpfCnpj(user.getCpfCnpj())
-                .telefone(user.getTelefone())
-                .password(user.getPassword())
-                .token(token)
-                .endereco(LoginResponseDTO.UsuarioEnderecoResponseDto
-                        .builder()
-                        .uf(endereco.getUf())
-                        .cep(endereco.getCep())
-                        .bairro(endereco.getBairro())
-                        .localidade(endereco.getLocalidade())
-                        .build())
-                .build();
+            return LoginResponseDTO
+                    .builder()
+                    .id(user.getId())
+                    .nome(user.getNome())
+                    .email(user.getEmail())
+                    .cpfCnpj(user.getCpfCnpj())
+                    .telefone(user.getTelefone())
+                    .password(user.getPassword())
+                    .token(token)
+                    .role(user.getRole())
+                    .endereco(LoginResponseDTO.UsuarioEnderecoResponseDto
+                            .builder()
+                            .id(endereco.getId())
+                            .uf(endereco.getUf())
+                            .cep(endereco.getCep())
+                            .bairro(endereco.getBairro())
+                            .localidade(endereco.getLocalidade())
+                            .build())
+                    .build();
 
 
         return LoginResponseDTO
@@ -125,6 +128,17 @@ public class UserMapper {
 
     }
 
+    public static UserEntity toEntity(RegisterUpdateDTO user) {
+        if (user == null) return null;
+
+        return UserEntity
+                .builder()
+                .nome(user.getNome())
+                .email(user.getEmail())
+                .cpfCnpj(user.getCpfCnpj())
+                .telefone(user.getTelefone())
+                .build();
+    }
 
     public static UserEntity toEntity(RegisterRequestDTO user) {
         if (user == null) return null;

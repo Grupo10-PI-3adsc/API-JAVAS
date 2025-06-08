@@ -8,27 +8,21 @@ import lombok.NoArgsConstructor;
 
 @Data
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
-public class LoginResponseDTO {
-    private Integer id;
+public class RegisterUpdateDTO {
     private String nome;
     private String email;
-    private String password;
     private String cpfCnpj;
     private String telefone;
-    private String token;
-    private permissionSets role;
-    private UsuarioEnderecoResponseDto endereco;
-
+    private EnderecoUpdateDTO endereco;
 
     @Data
     @Builder
-    public static class UsuarioEnderecoResponseDto {
+    public static class EnderecoUpdateDTO {
         private Integer id;
         private String cep;
         private String bairro;
         private String localidade;
         private String uf;
     }
+
 }

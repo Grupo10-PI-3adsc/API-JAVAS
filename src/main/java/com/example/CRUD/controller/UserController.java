@@ -1,15 +1,15 @@
 package com.example.CRUD.controller;
+import com.example.CRUD.dto.endereco.EnderecoMapper;
 import com.example.CRUD.dto.endereco.EnderecoResponseDto;
-import com.example.CRUD.dto.user.RegisterRequestDTO;
-import com.example.CRUD.dto.user.UserDTO;
-import com.example.CRUD.dto.user.UserDTOResponse;
-import com.example.CRUD.dto.user.UserMapper;
+import com.example.CRUD.dto.user.*;
 import com.example.CRUD.entity.EnderecoEntity;
 import com.example.CRUD.entity.UserEntity;
 import com.example.CRUD.repository.UserRepository;
 import com.example.CRUD.service.EnderecoService;
 import com.example.CRUD.service.UserService;
 
+import com.gtbr.ViaCepClient;
+import com.gtbr.domain.Cep;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -69,9 +69,21 @@ public class UserController {
     @PutMapping("/{id}")
     public ResponseEntity<UserDTOResponse> atualizar(
             @PathVariable Integer id,
-            @RequestBody RegisterRequestDTO userEntity) {
-        EnderecoEntity endereco = userEntity.getEnderecoId() != null && userEntity.getEnderecoId() > 0
-                ? enderecoService.buscarPorId(userEntity.getEnderecoId()) : null;
+            @RequestBody RegisterUpdateDTO userEntity) {
+        EnderecoEntity endereco = null;
+        if (userEntity.getEndereco().getId() != null && userEntity.getEndereco().getId() > 0){
+            endereco = enderecoService.buscarPorId(userEntity.getEndereco().getId());
+        }else if (userEntity.getEndereco().getCep() != null || userEntity.getEndereco().getCep() != ""){
+            endereco = enderecoService.save(EnderecoMapper.toEntity(ViaCepClient.findCep(userEntity.getEndereco().getCep())), null);
+        }
+        if (endereco != null){
+            endereco.setBairro(userEntity.getEndereco().getBairro());
+            endereco.setId(userEntity.getEndereco().getId());
+            endereco.setCep(userEntity.getEndereco().getCep());
+            endereco.setUf(userEntity.getEndereco().getUf());
+            endereco.setLocalidade(userEntity.getEndereco().getLocalidade());
+        }
+
         UserEntity user = userService.atualizar(UserMapper.toEntity(userEntity), id, endereco);
         return ResponseEntity.status(200).body(UserMapper.toDTOEnd(user));
     }
