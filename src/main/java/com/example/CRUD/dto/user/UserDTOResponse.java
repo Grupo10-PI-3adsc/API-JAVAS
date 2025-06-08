@@ -25,6 +25,7 @@ public class UserDTOResponse {
     @Data
     @Builder
     public static class UsuarioEnderecoResponseDto {
+        private Integer id;
         private String cep;
         private String logradouro;
         private String complemento;

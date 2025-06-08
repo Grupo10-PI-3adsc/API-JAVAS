@@ -51,12 +51,14 @@ public class UserMapper {
 
         return LoginResponseDTO
                 .builder()
+                .id(user.getId())
                 .nome(user.getNome())
                 .email(user.getEmail())
                 .cpfCnpj(user.getCpfCnpj())
                 .telefone(user.getTelefone())
                 .password(user.getPassword())
                 .token(token)
+                .role(user.getRole())
                 .build();
 
     }
@@ -71,6 +73,7 @@ public class UserMapper {
 
             return UserDTOResponse
                     .builder()
+                    .id(user.getId())
                     .nome(user.getNome())
                     .email(user.getEmail())
                     .cpfCnpj(user.getCpfCnpj())
@@ -80,6 +83,7 @@ public class UserMapper {
                     .endereco(
                             UserDTOResponse.UsuarioEnderecoResponseDto
                                     .builder()
+                                    .id(endereco.getId())
                                     .bairro(endereco.getBairro())
                                     .cep(endereco.getCep())
                                     .complemento(endereco.getComplemento())
