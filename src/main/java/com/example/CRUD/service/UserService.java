@@ -302,9 +302,13 @@ public class UserService {
     public UserEntity atualizar(UserEntity userEntity, Integer id, EnderecoEntity enderecoEntity) {
         userEntity.setId(id);
         UserEntity user = userPorId(id);
-        userEntity.setSenha(passwordEncoder.encode(user.getSenha()));
+        userEntity.setSenha(user.getSenha());
         userEntity.setEmail(user.getEmail());
         userEntity.setCpfCnpj(user.getCpfCnpj());
+        userEntity.setRole(user.getRole());
+        userEntity.setIsActive(user.getIsActive());
+        userEntity.setDataCadastro(user.getDataCadastro());
+
         if (enderecoEntity != null) {
             userEntity.setFkEndereco(enderecoEntity);
         }else if (user.getFkEndereco() != null){

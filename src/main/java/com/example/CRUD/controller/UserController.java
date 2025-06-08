@@ -71,18 +71,40 @@ public class UserController {
             @PathVariable Integer id,
             @RequestBody RegisterUpdateDTO userEntity) {
         EnderecoEntity endereco = null;
-        if (userEntity.getEndereco().getId() != null && userEntity.getEndereco().getId() > 0){
-            endereco = enderecoService.buscarPorId(userEntity.getEndereco().getId());
-        }else if (userEntity.getEndereco().getCep() != null || userEntity.getEndereco().getCep() != ""){
-            endereco = enderecoService.save(EnderecoMapper.toEntity(ViaCepClient.findCep(userEntity.getEndereco().getCep())), null);
+        if (userEntity.getEndereco() != null) {
+            if (userEntity.getEndereco().getId() != null && userEntity.getEndereco().getId() > 0) {
+                endereco = enderecoService.buscarPorId(userEntity.getEndereco().getId());
+            } else if (userEntity.getEndereco().getCep() != null || userEntity.getEndereco().getCep() != "") {
+                endereco = enderecoService.save(EnderecoMapper.toEntity(ViaCepClient.findCep(userEntity.getEndereco().getCep())), null);
+            }
+            endereco.setBairro(
+                    userEntity.getEndereco().getBairro() != null && !userEntity.getEndereco().getBairro().trim().isEmpty()
+                            ? userEntity.getEndereco().getBairro()
+                            : endereco.getBairro()
+            );
+            endereco.setId(
+                    (userEntity.getEndereco().getId() != null && userEntity.getEndereco().getId() > 0)
+                            ? userEntity.getEndereco().getId()
+                            : endereco.getId()
+            );
+            endereco.setCep(
+                    userEntity.getEndereco().getCep() != null && !userEntity.getEndereco().getCep().trim().isEmpty()
+                            ? userEntity.getEndereco().getCep()
+                            : endereco.getCep()
+            );
+            endereco.setUf(
+                    userEntity.getEndereco().getUf() != null && !userEntity.getEndereco().getUf().trim().isEmpty()
+                            ? userEntity.getEndereco().getUf()
+                            : endereco.getUf()
+            );
+            endereco.setLocalidade(
+                    userEntity.getEndereco().getLocalidade() != null && !userEntity.getEndereco().getLocalidade().trim().isEmpty()
+                            ? userEntity.getEndereco().getLocalidade()
+                            : endereco.getLocalidade()
+            );
         }
-        if (endereco != null){
-            endereco.setBairro(userEntity.getEndereco().getBairro());
-            endereco.setId(userEntity.getEndereco().getId());
-            endereco.setCep(userEntity.getEndereco().getCep());
-            endereco.setUf(userEntity.getEndereco().getUf());
-            endereco.setLocalidade(userEntity.getEndereco().getLocalidade());
-        }
+
+
 
         UserEntity user = userService.atualizar(UserMapper.toEntity(userEntity), id, endereco);
         return ResponseEntity.status(200).body(UserMapper.toDTOEnd(user));
