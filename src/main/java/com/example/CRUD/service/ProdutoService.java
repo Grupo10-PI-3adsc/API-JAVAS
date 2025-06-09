@@ -115,11 +115,16 @@ public class ProdutoService {
         PedidosEntity pedido = new PedidosEntity();
 //            pedido.setDataPedido(LocalDateTime.now());
         pedido.setFkUsuario(userService.userPorId(fkUser));
-        pedido.setTotal(
+        Double total =
                 produtosCarrinho.stream()
                         .mapToDouble(ProdutoEntity::getPreco)
-                        .sum()
-        );
+                        .sum();
+
+        if (instalacao){
+            total = total * 1.10;
+        }
+
+        pedido.setTotal(total);
 
         pedido.setInstalacao(instalacao);
         pedido.setStatus("Aguardando");
